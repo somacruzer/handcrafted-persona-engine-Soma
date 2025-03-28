@@ -5,7 +5,8 @@ Persona Engine
 <p>
 An AI-powered interactive avatar engine using Live2D, Large Language Models (LLMs), Automatic Speech Recognition (ASR), Text-to-Speech (TTS), and Real-time Voice Cloning (RVC). Designed primarily for VTubing, streaming, and virtual assistant applications.
 </p>
-<img src="assets/header.png" alt="Persona Engine"  height="450"   style="border: 4px dotted #d1c4e9; border-radius: 20px; padding: 4px;">
+
+<img src="assets/header.png" alt="Persona Engine"  height="450"  >
 
 <h2>✨ See it in Action! ✨</h2>
 <p>Watch Persona Engine bring a character to life:</p>
@@ -18,9 +19,7 @@ An AI-powered interactive avatar engine using Live2D, Large Language Models (LLM
   src="assets/demo_1.png"
   alt="Persona Engine Showcase"
   width="500"
-  style="border: 4px dotted #d1c4e9; border-radius: 20px; padding: 4px;"
 >
-<br/>
 </div>
 
 ## Overview
@@ -51,7 +50,6 @@ Need help getting started? Have questions or ideas? Want to see a live demo or i
 <a href="https://discord.gg/p3CXEyFtrA" target="_blank">
 <img src="assets/discord.png" alt="Join Discord Img"
   width="400"
-  style="border: 4px dotted #d1c4e9; border-radius: 20px; padding: 4px;"
   /></a>
   <br>
   <a href="https://discord.gg/p3CXEyFtrA" target="_blank">
@@ -73,7 +71,6 @@ The engine follows a general pipeline:
   src="assets/diagram.png"
   alt="Persona Engine Showcase"
   width="600"
-  style="border: 4px dotted #d1c4e9; border-radius: 20px; padding: 4px;"
 >
 <br/>
 </div>
@@ -118,7 +115,7 @@ This is the easiest way to get started on Windows.
         *   `Tts.EspeakPath` if `espeak-ng` is not automatically found in your PATH.
         *   Configure `Tts.Voice` and `Tts.Rvc` options as needed.
         *   Review and adjust `SpoutConfigs`, `Subtitle`, `Vision`, `RouletteWheel` settings.
-4.  **Run:** Execute the `PersonaEngine.App.exe` file located in the extracted application directory.
+4.  **Run:** Execute the `PersonaEngine.exe` file located in the extracted application directory.
 
 ### Method 2: Building from Source (Advanced / Other Platforms)
 
