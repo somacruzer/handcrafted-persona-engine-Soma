@@ -1,0 +1,26 @@
+[package]
+name = "rust-lib"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+
+[dependencies]
+xcap = "0.3.0"
+uniffi = { version = "0.25.0", features = [ "build" ] }
+base64 = "0.22.1"
+serde = "1.0.217"
+serde_json = "1.0.135"
+anyhow = "1.0.96"
+thiserror = "2.0.11"
+
+[build-dependencies]
+uniffi = { version = "0.25.0", features = [ "build" ] }
+uniffi_build = "0.25.0"
+uniffi_bindgen = "0.25.0"
+camino = "1.1.9"
+
+[lib]
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[bindings.csharp]
+cdylib_name = "rust_lib"

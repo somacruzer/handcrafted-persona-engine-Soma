@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonaEngine.App", "PersonaEngine.App\PersonaEngine.App.csproj", "{83F3CF45-F877-46CB-B933-02E3EA3F1AD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonaEngine.Lib", "PersonaEngine.Lib\PersonaEngine.Lib.csproj", "{5C05B364-90A4-41AB-A9E3-55292DA34ACD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83F3CF45-F877-46CB-B933-02E3EA3F1AD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83F3CF45-F877-46CB-B933-02E3EA3F1AD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83F3CF45-F877-46CB-B933-02E3EA3F1AD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83F3CF45-F877-46CB-B933-02E3EA3F1AD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C05B364-90A4-41AB-A9E3-55292DA34ACD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C05B364-90A4-41AB-A9E3-55292DA34ACD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C05B364-90A4-41AB-A9E3-55292DA34ACD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C05B364-90A4-41AB-A9E3-55292DA34ACD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
