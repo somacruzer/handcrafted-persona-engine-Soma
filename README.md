@@ -2,6 +2,9 @@
 <h1>
 Persona Engine <img src="./assets/dance.webp" width="30px">
 </h1>
+<img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/fagenorn/handcrafted-persona-engine/total">
+<img alt="Discord" src="https://img.shields.io/discord/1347649495646601419">
+<img alt="X (formerly Twitter) Follow" src="https://img.shields.io/twitter/follow/fagenorn">
 <p>
 An AI-powered interactive avatar engine using Live2D, Large Language Models (LLMs), Automatic Speech Recognition (ASR), Text-to-Speech (TTS), and Real-time Voice Cloning (RVC). Designed primarily for VTubing, streaming, and virtual assistant applications.
 </p>
