@@ -40,7 +40,7 @@ Persona Engine brings 2D digital characters to life. It listens to user voice in
 ## ✨ Features
 
 *   **Live2D Avatar Integration:** Loads and renders Live2D models. (Potential for lip-sync/animation triggers).
-*   **AI-Driven Conversation:** Connects to OpenAI-compatible LLM APIs (local/cloud), uses `personality.txt`. Optimized for a specific fine-tuned model (see Overview).
+*   **AI-Driven Conversation:** Connects to OpenAI-compatible LLM APIs (local/cloud), uses `personality.txt`. Optimized for a specific fine-tuned model (see [Overview](#overview)).
 *   **Voice Interaction:** Microphone input (NAudio/PortAudio), Silero VAD, Whisper ASR (Whisper.net).
 *   **Advanced Text-to-Speech (TTS):** Sophisticated pipeline (normalization, segmentation, phonemization, ONNX synthesis), supports custom `kokoro` voices.
 *   **Real-time Voice Cloning (RVC):** Integrates RVC ONNX models for real-time voice transformation.
@@ -155,14 +155,14 @@ However, the **Whisper ASR models are large and must be downloaded separately.**
 *   **Options:**
     *   **Local:** Run an LLM on your own PC (using tools like Ollama, LM Studio, llama.cpp, often with a proxy like LiteLLM to provide an OpenAI-compatible endpoint). Requires a powerful PC, especially GPU memory (VRAM).
     *   **Cloud:** Use a hosted service (OpenAI, Groq, Anthropic, Together AI, etc.). Often requires registration, API keys, and may incur costs based on usage.
-*   **Important Reminder:** The default `personality.txt` file is designed for a **specific fine-tuned model** (see Overview). Using standard models will likely require significant adjustments to `personality.txt` to get good, in-character results. Join the Discord for access/info on the fine-tuned model. You can edit the personality prompt in `Resources/Prompts/personality.txt`.
+*   **Important Reminder:** The default `personality.txt` file is designed for a **specific fine-tuned model** (see [Overview](#overview)). Using standard models will likely require significant adjustments to `personality.txt` to get good, in-character results. Join the Discord for access/info on the fine-tuned model. You can edit the personality prompt in `Resources/Prompts/personality.txt`.
 
 ### 6. Spout Receiver (To See Your Avatar)
 
 *   **What:** Persona Engine **does not display the avatar in its own window**. Instead, it sends the visual output via **Spout**. You need another application capable of receiving a Spout stream to see your character.
 *   **Recommendation:** **OBS Studio** is commonly used for streaming and works well.
 *   **Required Plugin:** You'll need the **Spout2 Plugin for OBS**: [https://github.com/Off-World-Live/obs-spout2-plugin/releases](https://github.com/Off-World-Live/obs-spout2-plugin/releases)
-*   **How:** Download and install the plugin for OBS. You'll configure this after running Persona Engine (see Getting Started).
+*   **How:** Download and install the plugin for OBS. You'll configure this after running Persona Engine (see [Getting Started](#-getting-started)).
 
 ## 🚀 Getting Started
 
@@ -193,8 +193,8 @@ This is the simplest way to get started if you're on Windows and don't want to d
 
 **Step 2: Install Prerequisites (If you haven't already)**
 
-*   Make sure you have installed the **.NET 9.0 Runtime** (see Prerequisites).
-*   Make sure you have installed **`espeak-ng`** and added it to your system PATH (see Prerequisites). The engine needs this for TTS.
+*   Make sure you have installed the **.NET 9.0 Runtime** (see [Prerequisites](#-prerequisites-what-you-need-before-you-start)).
+*   Make sure you have installed **`espeak-ng`** and added it to your system PATH (see [Prerequisites](#-prerequisites-what-you-need-before-you-start)). The engine needs this for TTS.
 
 **Step 3: Download and Place Required Whisper Models**
 
@@ -216,7 +216,7 @@ This is the simplest way to get started if you're on Windows and don't want to d
 *   Save the `appsettings.json` file.
 *   **(Optional but Recommended) Edit Personality:**
     *   Navigate to `Resources/Prompts/` and open `personality.txt` with a text editor.
-    *   Modify this file to define your character's personality, background, and how it should respond. **Remember:** Significant prompt engineering might be needed if you aren't using the specially fine-tuned LLM (see Overview).
+    *   Modify this file to define your character's personality, background, and how it should respond. **Remember:** Significant prompt engineering might be needed if you aren't using the specially fine-tuned LLM (see [Overview](#overview)).
 
 **Step 5: Run Persona Engine!**
 
@@ -269,7 +269,7 @@ This is the simplest way to get started if you're on Windows and don't want to d
 The `appsettings.json` file controls most aspects of the engine. Open it in a text editor to adjust settings. Refer to the comments within the file (if available in the release) or the structure itself for guidance:
 
 *   `Window`: Dimensions, title, fullscreen.
-*   `Llm`: API keys, models, endpoints for text/vision. **Remember:** The default `personality.txt` is optimized for a specific fine-tuned model (see Overview). Adjust prompts if using other models.
+*   `Llm`: API keys, models, endpoints for text/vision. **Remember:** The default `personality.txt` is optimized for a specific fine-tuned model (see [Overview](#overview)). Adjust prompts if using other models.
 *   `Tts`: Paths for Whisper model, TTS models, Espeak library (`EspeakPath` if not in PATH). Voice settings (default voice `Voice`, speed). RVC settings.
 *   `Subtitle`: Font, size, colors, margins, animation, layout.
 *   `Live2D`: Path to avatars directory, `ModelName` (must match your avatar's folder name).
@@ -280,7 +280,7 @@ The `appsettings.json` file controls most aspects of the engine. Open it in a te
 ## ▶️ Usage
 
 1.  Ensure all **Prerequisites** are met (downloaded Whisper models, installed `.NET` and `espeak-ng`, Spout receiver ready).
-2.  Make sure `appsettings.json` is configured correctly with your LLM details and that resource files (Whisper models, Avatar) are placed correctly (see "Getting Started"). Edit `Resources/Prompts/personality.txt` as needed.
+2.  Make sure `appsettings.json` is configured correctly with your LLM details and that resource files (Whisper models, Avatar) are placed correctly (see [Getting Started](#-getting-started)). Edit `Resources/Prompts/personality.txt` as needed.
 3.  Run the application using the appropriate method (`PersonaEngine.exe` for pre-built release, `dotnet PersonaEngine.App.dll` for source build).
 4.  The main **Configuration and Control UI** window will appear. The engine starts processing in the background (check the console window for logs). **The avatar is NOT displayed in this window.**
 5.  **Set up your Spout receiver application** (e.g., OBS Studio with the Spout2 Capture source pointing to the Persona Engine sender) to view the Live2D avatar output.
