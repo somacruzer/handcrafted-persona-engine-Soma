@@ -34,7 +34,7 @@ Persona Engine brings 2D digital characters to life. It listens to user voice in
 *   **AI-Driven Conversation:** Connects to OpenAI-compatible LLM APIs (local/cloud), uses `personality.txt`. Optimized for a specific fine-tuned model (see Overview).
 *   **Voice Interaction:** Microphone input (NAudio/PortAudio), Silero VAD, Whisper ASR (Whisper.net).
 *   **Advanced Text-to-Speech (TTS):** Sophisticated pipeline (normalization, segmentation, phonemization, ONNX synthesis), supports custom `kokoro` voices.
-*   **Real-time Voice Cloning (RVC):** Integrates RVC models for real-time voice transformation.
+*   **Real-time Voice Cloning (RVC):** Integrates RVC ONNX models for real-time voice transformation.
 *   **Customizable Subtitles:** Real-time display with extensive configuration options.
 *   **Screen Awareness (Experimental):** Optional Vision module to capture windows and use Vision LLMs.
 *   **Interactive Roulette Wheel (Experimental):** Optional on-screen spinning wheel.
@@ -47,7 +47,7 @@ Persona Engine brings 2D digital characters to life. It listens to user voice in
 <br>
 <h2>💬 Join Our Community! 💬</h2>
 <p>
-Need help getting started? Have questions or ideas? Want to see a live demo, test the special fine-tuned model, or interact directly with a Persona Engine instance? Join the Discord server!
+Need help getting started? Have questions or ideas? Want to see a live demo, test the special fine-tuned model, or interact directly with a Persona Engine instance? Having trouble converting RVC models? Join the Discord server!
 </p>
 <a href="https://discord.gg/p3CXEyFtrA" target="_blank">
 <img src="assets/discord.png" alt="Join Discord Img"
@@ -65,7 +65,7 @@ The engine follows a general pipeline:
 
 1.  **Input:** 🎤 Mic -> 🗣️ VAD -> 📝 ASR (Whisper) -> (Optional) 👀 Vision.
 2.  **Processing:** 🧠 LLM (with Personality - ideally the fine-tuned model) -> 💬 Response -> (Optional) 🤬 Profanity Check.
-3.  **Output:** 🔊 TTS -> 🎤 RVC (Optional) -> 🎭 Live2D Animation -> 📜 Subtitles -> 🎶 Audio Playback -> 📺 Spout Visuals.
+3.  **Output:** 🔊 TTS -> 🎤 RVC (Optional / ONNX) -> 🎭 Live2D Animation -> 📜 Subtitles -> 🎶 Audio Playback -> 📺 Spout Visuals.
 
 <div align="center">
 <br/>
@@ -77,29 +77,74 @@ The engine follows a general pipeline:
 <br/>
 </div>
 
-## 📋 Prerequisites
+## 📋 Prerequisites: What You Need Before You Start
 
-Before you start, make sure your system meets these requirements:
+Getting Persona Engine running involves a few steps. Please make sure you have the following ready:
 
-*   **Operating System:** Currently, the project is primarily developed and tested on **Windows**. Pre-built releases are Windows-only. Running on Linux/macOS is possible by building from source but requires advanced setup for native dependencies (CUDA, Spout, Audio, etc.) and is **not officially supported**.
-*   **GPU (NVIDIA CUDA Strongly Recommended):** A modern NVIDIA GPU with CUDA support is **highly recommended** for good performance. AI tasks like Whisper (speech-to-text), ONNX Runtime (TTS), and RVC (voice cloning) run much faster on a GPU.
-    *   Make sure you have the latest NVIDIA drivers installed.
-    *   Performance on CPU-only or non-NVIDIA GPUs may be very slow or unstable.
-*   **.NET 9.0 Runtime:** The program needs this to run. The installer for pre-built releases *might* prompt you to install it if missing, or you can get it from Microsoft's website. (Included in pre-built .zip files usually).
-*   **Models & Resources (Essential - Download Separately):**
-    *   **❗ IMPORTANT:** These large files are **NOT** included in the main download. You **MUST** get them yourself.
-    *   **Live2D Avatar Model:** Your own character files (`.model3.json`, textures, motions, etc.). You'll place these inside the `Resources/Live2D/Avatars/` folder later.
-    *   **Whisper Model (for Speech-to-Text):** Download a GGUF format model. A good starting point is `ggml-large-v3-turbo.bin`. You can find these on sites like Hugging Face. Place the downloaded `.bin` file in the `Resources/Models/` folder.
-    *   **TTS Resources (for Speaking):**
-        *   TTS voice models (e.g., `kokoro` format) go into the `Resources/Models/TTS/` folder (or wherever `ModelDirectory` points in settings).
-        *   **`espeak-ng`:** This is needed for text processing *before* speech synthesis. Download it from the [espeak-ng releases page](https://github.com/espeak-ng/espeak-ng/releases) and install it. Make sure it's added to your system's PATH during installation, or you'll need to specify the path in `appsettings.json`.
-        *   Other required TTS files (like OpenNLP sentence models, phonemizer models) need to be in `Resources/Models/TTS/` and its subfolders. Check the default structure and configuration.
-    *   **Other ONNX Models:** Files like `silero_vad.onnx` (for voice activity detection) should be in `Resources/Models/`. These might be included in releases, but double-check.
-    *   **(Optional) RVC Models (for Voice Cloning):** If using RVC, you need `.pth` and `.index` files for your voice model. Place them somewhere accessible and set the paths in `appsettings.json`.
-*   **LLM Access (for Conversation Brain):**
-    *   You need access to an AI that understands chat requests. This requires an API endpoint (a URL address) and sometimes an API Key (like a password).
-    *   This can be a **local server** running on your own PC (like `llama.cpp`, `Ollama` with `LiteLLM`) or a **cloud service** (like OpenAI, Groq, Anthropic - requires an account and potentially payment).
-    *   *Note:* Remember, the engine's default prompts (`personality.txt`) are best suited for the specific fine-tuned model mentioned in the Overview. Using other models might require changing the `personality.txt` file significantly.
+### 1. System Requirements
+
+*   **Operating System:**
+    *   ✅ **Windows (Recommended):** The engine is primarily developed and tested here. Pre-built releases are Windows-only.
+    *   ⚠️ **Linux / macOS:** Possible *only* by building from source. Requires advanced setup for dependencies (CUDA, Spout alternatives, Audio libraries) and is **not officially supported**.
+*   **Graphics Card (GPU):**
+    *   ✅ **NVIDIA GPU with CUDA (Strongly Recommended):** Essential for good performance! AI tasks (Whisper ASR, TTS, RVC) run much faster on CUDA. Make sure you have the latest NVIDIA drivers.
+    *   ⚠️ **CPU-Only / Other GPUs:** Performance will likely be very slow or unstable.
+*   **Microphone:** Needed for voice input.
+*   **Speakers / Headphones:** Needed to hear the output.
+
+### 2. Software to Install
+
+You need to install these two pieces of software on your system *before* running Persona Engine:
+
+*   **[.NET 9.0 Runtime](https://dotnet.microsoft.com/download/dotnet/9.0):**
+    *   **What it is:** The core framework the application runs on.
+    *   **How to get it:** Download and install it from the official Microsoft website. The installer for pre-built Persona Engine releases *might* prompt you if it's missing, but it's best to install it system-wide beforehand. (It's usually included within the pre-built `.zip` file's `dotnet_runtime` folder for convenience, but installing system-wide is recommended).
+*   **[`espeak-ng`](https://github.com/espeak-ng/espeak-ng/releases):**
+    *   **What it is:** A text processing tool critical for the Text-to-Speech (TTS) system to understand how to pronounce words (phonemization). **TTS will likely fail without it.**
+    *   **How to get it:**
+        1.  Go to the `espeak-ng` releases page.
+        2.  Download the appropriate installer for your system (e.g., `espeak-ng-*.msi` for Windows).
+        3.  **Important:** During installation, ensure you check the option to **"Add espeak-ng to the system PATH"**. This is the easiest way.
+        4.  *Alternatively*, if you don't add it to PATH, you *must* manually specify the full path to `espeak-ng.dll` (or equivalent library file for your OS) in the `Tts.EspeakPath` setting within `appsettings.json`.
+
+### 3. ❗ Essential Models & Resources (Download Separately) ❗
+
+These large files are **NOT** included in the main Persona Engine download/repository. **You MUST download them yourself** and place them into the correct folders *after* you extract or build the engine (see "Getting Started"). The engine needs these to function properly (hear you, speak, show your avatar).
+
+*   **Your Live2D Avatar Model:**
+    *   **What:** The visual character files (`.model3.json`, textures, motions, physics, etc.).
+    *   **Where it goes:** Inside a dedicated subfolder within `Resources/Live2D/Avatars/`. For example, if your character is named "MyChar", put its files in `Resources/Live2D/Avatars/MyChar/`. You'll then set `"ModelName": "MyChar"` in `appsettings.json`.
+*   **Whisper ASR Model (for Speech-to-Text):**
+    *   **What:** The AI model that converts your speech into text. Needs to be in **GGUF format**.
+    *   **Recommendation:** Start with `ggml-large-v3-turbo.bin` (or a smaller/faster variant like `medium` or `base` if needed).
+    *   **Where to find:** Search for "Whisper GGUF models" on sites like Hugging Face (e.g., search repositories like `ggerganov/whisper.cpp`).
+    *   **Where it goes:** Place the downloaded `.bin` file directly into the `Resources/Models/` folder.
+*   **TTS Resources (for Speaking):**
+    *   **What:** Files needed for the engine to generate speech. This includes:
+        *   **Voice Models:** Specific voice data (e.g., in the custom `kokoro` format, or potentially other ONNX-based formats).
+        *   **Phonemizer Models:** Files used by `espeak-ng` or similar tools (often included with `espeak-ng` or downloaded separately depending on TTS pipeline specifics).
+        *   **Sentence Splitter Models:** Files for breaking text into sentences (e.g., OpenNLP models like `en-sent.bin`).
+    *   **Where it goes:** These generally go into `Resources/Models/TTS/` and its subdirectories. Check the default configuration (`Tts.ModelDirectory` in `appsettings.json`) and any documentation specific to the voice models you acquire.
+*   **VAD Model (for Voice Activity Detection):**
+    *   **What:** A small model to detect when you start and stop speaking (`silero_vad.onnx`).
+    *   **Where it goes:** Should be in the `Resources/Models/` folder. This file *might* be included in pre-built releases, but double-check.
+
+### 4. Optional: RVC Models (for Voice Cloning)
+
+*   **What:** If you want to use Real-time Voice Cloning (RVC) to make the TTS output sound like a specific target voice, you need a trained RVC model exported to the **ONNX format**. This usually involves a `.onnx` file containing the voice model itself.
+*   **Note on `.pth` files:** Standard RVC training often produces `.pth` files. These **must be converted to ONNX** to be used with Persona Engine. If you need help with conversion, please **join our Discord**!
+*   **Where it goes:** Place the `.onnx` file somewhere accessible on your computer. You will then specify the full path to the `.onnx` file in the `Tts.Rvc` section of `appsettings.json`.
+
+### 5. LLM Access (The "Brain")
+
+*   **What:** You need access to a Large Language Model (LLM) API that can process chat-like requests. This involves:
+    *   **API Endpoint URL:** The web address of the LLM service (e.g., `http://localhost:11434/v1/chat/completions` for a local Ollama+LiteLLM setup, or a cloud provider's URL).
+    *   **(Optional) API Key:** A secret password/token required by some services (like OpenAI, Groq, Anthropic).
+    *   **Model Name:** The specific name of the model you want to use (e.g., `gpt-4o`, `llama3`, `your-fine-tuned-model`).
+*   **Options:**
+    *   **Local:** Run an LLM on your own PC (using tools like Ollama, LM Studio, llama.cpp, often with a proxy like LiteLLM to provide an OpenAI-compatible endpoint). Requires a powerful PC, especially GPU memory (VRAM).
+    *   **Cloud:** Use a hosted service (OpenAI, Groq, Anthropic, Together AI, etc.). Often requires registration, API keys, and may incur costs based on usage.
+*   **Important Reminder:** The default `personality.txt` file is designed for a **specific fine-tuned model** (see Overview). Using standard models will likely require significant adjustments to `personality.txt` to get good, in-character results. Join the Discord for access/info on the fine-tuned model.
 
 ## 🚀 Getting Started
 
@@ -111,49 +156,57 @@ There are two ways to use Persona Engine:
 
 This is the simplest way to get started if you're on Windows and don't want to deal with code.
 
-**Step 1: Download Persona Engine**
+**Step 1: Download & Extract Persona Engine**
 
 <div align="center" style="margin: 20px;">
-  <a href="https://github.com/fagenorn/handcrafted-persona-engine/releases" target="_blank" style="display: inline-block; padding: 15px 30px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: background-color 0.3s;">
-    ⬇️ Download Latest Release (.zip) ⬇️
+  <a href="https://github.com/fagenorn/handcrafted-persona-engine/releases" target="_blank">
+  <img
+  src="assets/download.png"
+  alt="Persona Engine Showcase"
+  width="350"
+>
   </a>
-  <p style="margin-top: 10px;">(Click the button to go to the Releases page. Download the `.zip` file from the latest release.)</p>
+  <p><i>(Click the button to go to the Releases page. Download the `.zip` file from the latest release.)</i></p>
 </div>
 
-**Step 2: Extract the Files**
-
-*   Find the downloaded `.zip` file (e.g., `PersonaEngine_vX.Y.Z.zip`) in your Downloads folder.
+*   Find the downloaded `.zip` file (e.g., `PersonaEngine_vX.Y.Z.zip`).
 *   Right-click the file and choose "Extract All..." or use a program like 7-Zip or WinRAR.
-*   Choose a location to extract the files to (e.g., create a new folder like `C:\PersonaEngine`). **Avoid** system folders like Program Files.
+*   Choose a location (e.g., `C:\PersonaEngine`). **Avoid** system folders like Program Files.
 
-**Step 3: Add Your Models & Resources**
+**Step 2: Install Prerequisites (If you haven't already)**
 
-*   Go into the folder where you extracted Persona Engine.
-*   You'll see a `Resources` folder. Inside it, you need to place the **essential models and avatar files** you downloaded separately (see **Prerequisites** section above):
-    *   Put your **Live2D Avatar** folder(s) into `Resources/Live2D/Avatars/`.
-    *   Put your downloaded **Whisper Model** (`.bin` file) into `Resources/Models/`.
-    *   Put your **TTS Voice Models** and related files into `Resources/Models/TTS/`.
-    *   Make sure other required models like `silero_vad.onnx` are in `Resources/Models/`.
-    *   If using **RVC**, have your `.pth` and `.index` files ready somewhere (you'll point to them in the config).
-*   **Install `espeak-ng`** if you haven't already (see Prerequisites).
+*   Make sure you have installed the **.NET 9.0 Runtime** (see Prerequisites).
+*   Make sure you have installed **`espeak-ng`** and added it to your system PATH (see Prerequisites). The engine needs this for TTS.
 
-**Step 4: Configure the Engine (`appsettings.json`)**
+**Step 3: Quick Configuration (`appsettings.json`)**
 
-*   Inside the extracted Persona Engine folder, find the file named `appsettings.json`.
-*   Open it with a text editor (like Notepad, Notepad++, VS Code).
-*   **Carefully update these important settings:**
-    *   `Llm`: Set `TextEndpoint` (the URL of your LLM), `TextModel` (the model name your LLM uses), and `TextApiKey` (if your LLM requires one).
-    *   `Llm`: Do the same for `VisionEndpoint`, `VisionModel`, `VisionApiKey` *only if* you plan to use the experimental screen awareness feature.
-    *   `Live2D`: Change `ModelName` to exactly match the name of your avatar's folder inside `Resources/Live2D/Avatars/`.
-    *   `Tts`: If you installed `espeak-ng` somewhere unusual, set the correct `EspeakPath`.
-    *   `Tts`: Configure your desired `Voice` (matching your TTS model folder) and `Rvc` options (paths to `.pth` and `.index` files if using RVC).
-    *   Review other settings like `SpoutConfigs` (for OBS), `Subtitle`, `Audio` (microphone/speaker selection), etc., and adjust if needed. Save the file when done.
+*   Inside the extracted Persona Engine folder, find `appsettings.json`.
+*   Open it with a text editor (Notepad, Notepad++, VS Code).
+*   **Crucial Settings to Start:**
+    *   `Llm` section:
+        *   Set `TextEndpoint`: The URL of your LLM service (e.g., `http://localhost:11434/v1` for local).
+        *   Set `TextModel`: The name of the LLM you want to use (e.g., `llama3`, `gpt-4o`).
+        *   Set `TextApiKey`: Enter your API key *only if* your LLM service requires one (leave empty `""` otherwise).
+    *   `Live2D` section:
+        *   Set `ModelName`: Change this to **exactly match** the name of your avatar's folder that you will place inside `Resources/Live2D/Avatars/` in the next step. (e.g., if your avatar files are in a folder named "MyChar", set this to `"MyChar"`).
+*   Save the `appsettings.json` file.
+
+**Step 4: Add Essential Resources (Models & Avatar)**
+
+*   Now, go into the `Resources` folder within your extracted Persona Engine directory.
+*   **Place the files you downloaded separately (see Prerequisites):**
+    *   **Live2D Avatar:** Create a folder inside `Resources/Live2D/Avatars/` with the *exact same name* you set for `ModelName` in Step 3. Put all your avatar files (`.model3.json`, textures, etc.) into this folder.
+        *   Example: If `ModelName` is `"MyChar"`, put files in `Resources/Live2D/Avatars/MyChar/`.
 
 **Step 5: Run Persona Engine!**
 
-*   Double-click the `PersonaEngine.exe` file located in the main folder you extracted.
-*   The application window should appear with your Live2D avatar.
-*   If everything is configured correctly, it should start listening for your voice!
+*   Double-click the `PersonaEngine.exe` file in the main folder.
+*   You won't be able to see your Live2D model since this is being output to spout.
+*   If the LLM is reachable and the resources are in the right place, it should start listening! Try speaking into your microphone.
+
+**Step 6: Further Configuration (Optional but Recommended)**
+
+*   Once it's running, you might want to fine-tune other settings in `appsettings.json`:
 
 ---
 
@@ -164,6 +217,7 @@ This method is for developers or users wanting to run on potentially unsupported
 1.  **Install Prerequisites:**
     *   Git: [https://git-scm.com/](https://git-scm.com/)
     *   .NET 9.0 SDK: [https://dotnet.microsoft.com/download/dotnet/9.0](https://dotnet.microsoft.com/download/dotnet/9.0)
+    *   `espeak-ng`: Install globally and ensure it's in the system PATH (see Prerequisites).
     *   (Windows) Ensure CUDA toolkit/drivers are installed if using GPU features.
     *   (Linux/macOS) Manually install equivalent native libraries (CUDA, PortAudio, espeak-ng, etc.) and ensure they are accessible to .NET. This can be complex. Spout may require alternatives like NDI or Syphon depending on your needs and effort.
 2.  **Clone the Repository:**
@@ -186,11 +240,10 @@ This method is for developers or users wanting to run on potentially unsupported
 5.  **Place Models & Resources:**
     *   Navigate to the build output directory (e.g., `src/PersonaEngine/PersonaEngine.App/bin/Release/net9.0/`).
     *   Create the `Resources` directory structure (`Resources/Live2D/Avatars`, `Resources/Models/TTS`, etc.).
-    *   Download and place all required Live2D, Whisper, TTS, ONNX VAD, and optional RVC models into the correct subdirectories within `Resources` (see **Prerequisites**).
-    *   Install `espeak-ng` globally or ensure it's accessible.
+    *   Download and place all required Live2D, Whisper, TTS, ONNX VAD, and optional RVC ONNX models into the correct subdirectories within `Resources` (see **Prerequisites** and **Method 1, Step 4** for locations).
 6.  **Configure `appsettings.json`:**
     *   Copy or create `appsettings.json` in the build output directory.
-    *   Configure it following the same steps as in **Method 1, Step 4**.
+    *   Configure it following the same steps as in **Method 1, Step 3** (for essential LLM/Live2D settings) and **Step 6** (for other settings like audio, TTS/RVC paths, etc.). Remember to set the RVC path to your `.onnx` file if using it.
 7.  **Run the Application:**
     ```bash
     # Navigate to the App's build output directory
@@ -198,7 +251,7 @@ This method is for developers or users wanting to run on potentially unsupported
     # Run the application
     dotnet PersonaEngine.App.dll
     ```
-    *(Or run the executable directly, e.g., `PersonaEngine.App.exe` on Windows)*
+    *(Or run the executable directly, e.g., `PersonaEngine.exe` on Windows)*
 
 ---
 
@@ -208,27 +261,25 @@ The `appsettings.json` file controls most aspects of the engine. Open it in a te
 
 *   `Window`: Dimensions, title, fullscreen.
 *   `Llm`: API keys, models, endpoints for text/vision. **Remember:** The default `personality.txt` is optimized for a specific fine-tuned model (see Overview). Adjust prompts if using other models.
-*   `Tts`: Model/resource paths (Whisper model, TTS models, Espeak path), voice settings (default voice, speed, RVC paths/settings).
+*   `Tts`: Paths for Whisper model, TTS models, Espeak library (`EspeakPath` if not in PATH). Voice settings (default voice `Voice`, speed). RVC settings.
 *   `Subtitle`: Font, size, colors, margins, animation, layout.
-*   `Live2D`: Avatar resource path, `ModelName` (must match your avatar's folder name).
+*   `Live2D`: Path to avatars directory, `ModelName` (must match your avatar's folder name).
 *   `SpoutConfigs`: Spout output names and resolutions for streaming software like OBS.
 *   `Vision`: Screen capture settings (experimental).
 *   `RouletteWheel`: Interactive wheel settings (experimental).
-*   `Audio`: Input/Output device selection (use device names or IDs), VAD sensitivity settings.
-*   `Profanity`: Filter settings.
 
 ## ▶️ Usage
 
-1.  Ensure all **Prerequisites** are met (especially downloaded models and installed `espeak-ng`).
-2.  Make sure `appsettings.json` is configured correctly with your API keys, model paths, avatar name, etc.
-3.  Run the application using the appropriate method from the "Getting Started" section (`PersonaEngine.exe` for pre-built release).
+1.  Ensure all **Prerequisites** are met (especially downloaded models, installed `.NET` and `espeak-ng`).
+2.  Make sure `appsettings.json` is configured correctly with your LLM details, Live2D `ModelName`, and that resource files are placed correctly (see "Getting Started").
+3.  Run the application using the appropriate method (`PersonaEngine.exe` for pre-built release, `dotnet PersonaEngine.App.dll` for source build).
 4.  The main window should appear displaying the Live2D avatar.
 5.  Speak into your configured microphone. The engine should:
     *   Detect when you start and stop speaking (VAD).
     *   Transcribe your speech to text (Whisper).
     *   Send the text (and personality context) to the LLM.
     *   Receive a response from the LLM.
-    *   Convert the response text to speech (TTS/RVC).
+    *   Convert the response text to speech (TTS, potentially using RVC if configured).
     *   Play the spoken audio.
     *   Display subtitles.
     *   Animate the avatar (basic mouth movement planned).
