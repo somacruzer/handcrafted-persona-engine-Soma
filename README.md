@@ -244,12 +244,12 @@ The simplest way to get started on Windows!
 
 **Step 1: 💾 Download & Extract Persona Engine**
 
-<div align="center" style="margin: 20px;">
+<div align="center">
   <a href="https://github.com/fagenorn/handcrafted-persona-engine/releases" target="_blank">
   <img
   src="assets/download.png"
   alt="Download Latest Release Button"
-  width="350"
+  width="300"
 >
   </a>
   <p><i>(Click the button, grab the `.zip` from the latest release!)</i></p>
@@ -355,6 +355,11 @@ The simplest way to get started on Windows!
 
 ## 🔧 Configuration (`appsettings.json`)
 
+<div align="center">
+<img src="assets/mascot_cog.png" width="150" alt="Mascot with Wand">
+<p>Configuring your engine!</p>
+</div>
+
 This file is your control panel! Open it with a text editor.
 
 *   🖼️ `Window`: Size, title, fullscreen.
@@ -386,6 +391,10 @@ This file is your control panel! Open it with a text editor.
 8.  ⚙️ Use the UI to monitor or change settings on the fly!
 
 ## 💡 Potential Use Cases: Imagine the Fun!
+
+<div align="center">
+<img src="assets/mascot_light.png" width="150" alt="Mascot with Wand">
+</div>
 
 *   🎬 **VTubing & Live Streaming:** An AI co-host or character reacting live!
 *   🤖 **Virtual Assistant:** A friendly desktop helper.
