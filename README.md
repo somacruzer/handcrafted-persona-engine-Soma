@@ -288,7 +288,7 @@ This is the simplest way to get up and running on Windows.
 **Step 1: 💾 Download & Extract Persona Engine**
 
 <div align="center">
-  <a href="https://github.com/fagenorn/handcrafted-persona-engine/releases" target="_blank">
+  <a href="https://github.com/fagenorn/handcrafted-persona-engine/releases/latest" target="_blank">
   <img
   src="assets/download.png"
   alt="Download Latest Release Button"
