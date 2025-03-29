@@ -19,17 +19,9 @@ An AI-powered interactive avatar engine using Live2D, Large Language Models (LLM
 
 <h2>💖 See it in Action! 💖</h2>
 <p>Watch Persona Engine work its magic:</p>
-<!-- TODO: Replace with actual URL and Thumbnail -->
-<a href="YOUR_DEMO_VIDEO_URL_HERE" target="_blank">
-  <img src="URL_TO_YOUR_VIDEO_THUMBNAIL_HERE" alt="Persona Engine Demo Video" width="600">
-  <!-- Suggestion: Make this thumbnail look like a video player with a play button -->
+<a href="https://www.youtube.com/watch?v=4V2DgI7OtHE" target="_blank">
+  <img src="assets/demo_1.png" alt="Persona Engine Demo Video" width="600">
 </a>
-<br/>
-<img
-  src="assets/demo_1.png"
-  alt="Persona Engine Showcase"
-  width="500"
->
 </div>
 
 
