@@ -35,7 +35,7 @@ An AI-powered interactive avatar engine using Live2D, Large Language Models (LLM
 
 Persona Engine brings 2D digital characters to life. It listens to user voice input, processes it using powerful AI language models, generates a response based on a defined personality, speaks the response using synthesized and potentially cloned voice, and animates a Live2D avatar accordingly. The visual output can be easily integrated into streaming software like OBS Studio via Spout.
 
-**Important Note on AI Model:** Persona Engine is designed to work optimally with a **specially fine-tuned Large Language Model (LLM)**. This model understands the specific way the engine sends information and generates more natural, in-character responses. While you *can* use other standard OpenAI-compatible models by carefully editing the `personality.txt` prompt file, the results may be less ideal or require significant prompt engineering. The fine-tuned model is currently undergoing testing and may be released publicly in the future. **To experience the engine with its intended model or see a demo, please join our Discord community!**
+**Important Note on AI Model and Personality:** Persona Engine is designed to work optimally with a **specially fine-tuned Large Language Model (LLM)**. This model understands the specific way the engine sends information and generates more natural, in-character responses. While you *can* use other standard OpenAI-compatible models by carefully editing the `personality.txt` prompt file, the results may be less ideal or require significant prompt engineering. **For users employing standard models, a `Resources/Prompts/personality_example.txt` file is provided as a basic template. You should use its content as inspiration or copy it to create your *actual* `personality.txt` file.** The fine-tuned model is currently undergoing testing and may be released publicly in the future. **To experience the engine with its intended model or see a demo, please join our Discord community!**
 
 ## ✨ Features
 
@@ -73,7 +73,7 @@ Need help getting started? Have questions or ideas? Want to see a live demo, tes
 The engine follows a general pipeline:
 
 1.  **Input:** 🎤 Mic -> 🗣️ VAD -> 📝 ASR (Whisper) -> (Optional) 👀 Vision.
-2.  **Processing:** 🧠 LLM (with Personality - ideally the fine-tuned model) -> 💬 Response -> (Optional) 🤬 Profanity Check.
+2.  **Processing:** 🧠 LLM (with Personality from `personality.txt` - ideally the fine-tuned model) -> 💬 Response -> (Optional) 🤬 Profanity Check.
 3.  **Output:** 🔊 TTS -> 🎤 RVC (Optional / ONNX) -> 🎭 Live2D Animation -> 📜 Subtitles -> 🎶 Audio Playback -> 📺 Spout Visuals.
 
 <div align="center">
@@ -96,12 +96,62 @@ Getting Persona Engine running involves a few steps. Please make sure you have t
     *   ✅ **Windows (Recommended):** The engine is primarily developed and tested here. Pre-built releases are Windows-only.
     *   ⚠️ **Linux / macOS:** Possible *only* by building from source. Requires advanced setup for dependencies (CUDA, Spout alternatives, Audio libraries) and is **not officially supported**.
 *   **Graphics Card (GPU):**
-    *   ✅ **NVIDIA GPU with CUDA (Strongly Recommended):** Essential for good performance! AI tasks (Whisper ASR, TTS, RVC) run much faster on CUDA. Make sure you have the latest NVIDIA drivers.
+    *   ✅ **NVIDIA GPU with CUDA (Strongly Recommended):** Essential for good performance! AI tasks (Whisper ASR, TTS, RVC) run much faster on CUDA. See the **[CUDA & cuDNN Installation Guide](#-installing-nvidia-cuda-and-cudnn-for-gpu-acceleration)** below. Make sure you have the latest NVIDIA drivers.
     *   ⚠️ **CPU-Only / Other GPUs:** Performance will likely be very slow or unstable.
 *   **Microphone:** Needed for voice input.
 *   **Speakers / Headphones:** Needed to hear the output.
 
-### 2. Software to Install
+### 2. Installing NVIDIA CUDA and cuDNN (for GPU Acceleration)
+
+For optimal performance, especially with Whisper ASR, TTS, and RVC, running on an NVIDIA GPU with CUDA is highly recommended. Follow these steps to set it up on Windows:
+
+1.  **Check GPU Compatibility & Install Driver:**
+    *   Ensure your NVIDIA GPU is CUDA-capable (most modern gaming/workstation GPUs are). You can check the [NVIDIA CUDA GPUs list](https://developer.nvidia.com/cuda-gpus).
+    *   Download and install the **latest NVIDIA Game Ready or Studio driver** for your GPU from the [NVIDIA Driver Downloads page](https://www.nvidia.com/Download/index.aspx). A clean installation is often recommended.
+
+2.  **Install CUDA Toolkit:**
+    *   The CUDA Toolkit provides the development environment and libraries needed.
+    *   Go to the [NVIDIA CUDA Toolkit download page](https://developer.nvidia.com/cuda-toolkit-archive) (archive recommended to match specific dependencies if needed, or get the latest from the main [CUDA Toolkit page](https://developer.nvidia.com/cuda-downloads)).
+    *   Select your system configuration (Windows, x86_64, your Windows version, `exe (local)` installer type).
+    *   Download and run the installer. The **Express (Recommended)** installation option is usually sufficient.
+    *   Note the installation path, which is typically `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y` (where `vX.Y` is the version number, e.g., `v12.1`). You will need this path for the next step.
+
+3.  **Install cuDNN Library:**
+    *   cuDNN (CUDA Deep Neural Network library) provides highly tuned primitives for deep learning frameworks. Persona Engine leverages this for AI model performance.
+    *   Go to the [NVIDIA cuDNN download page](https://developer.nvidia.com/cudnn-downloads). You will need to join the free NVIDIA Developer Program to download the files.
+    *   **Crucially, download the cuDNN version that matches your installed CUDA Toolkit version.** The download page will list cuDNN versions compatible with specific CUDA versions (e.g., "Download cuDNN vA.B.C for CUDA X.Y").
+    *   Select the "Local Installer for Windows (Zip)" or similar archive file for your matching CUDA version.
+    *   **Extract the downloaded cuDNN zip file** to a temporary location (e.g., your Downloads folder). Inside, you will typically find folders named `bin`, `include`, and `lib`.
+    *   **Copy the cuDNN files into your CUDA Toolkit installation directory:**
+        *   Open the extracted cuDNN folder.
+        *   Navigate into the `bin` subfolder. **Copy** all the files inside it (e.g., `cudnn*.dll`).
+        *   Navigate to your CUDA Toolkit installation's `bin` folder (e.g., `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y\bin`). **Paste** the copied files here.
+        *   Go back to the extracted cuDNN folder.
+        *   Navigate into the `include` subfolder. **Copy** the file(s) inside (e.g., `cudnn*.h`).
+        *   Navigate to your CUDA Toolkit installation's `include` folder (e.g., `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y\include`). **Paste** the copied file(s) here.
+        *   Go back to the extracted cuDNN folder.
+        *   Navigate into the `lib` subfolder, then into the `x64` subfolder inside `lib`. **Copy** the file(s) inside (e.g., `cudnn*.lib`).
+        *   Navigate to your CUDA Toolkit installation's `lib\x64` folder (e.g., `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y\lib\x64`). **Paste** the copied file(s) here.
+        *   *(Replace `vX.Y` in the paths above with the actual version number of your installed CUDA Toolkit).*
+    *   Essentially, you are merging the contents of the cuDNN `bin`, `include`, and `lib\x64` folders into the corresponding folders within your main CUDA Toolkit installation directory.
+
+4.  **Add cuDNN to System Path (Important!):**
+    *   While copying the files often works, adding the CUDA paths (which now include cuDNN) to your system's Environment Variables PATH ensures applications can find them reliably.
+    *   Search for "Environment Variables" in the Windows search bar and select "Edit the system environment variables".
+    *   Click the "Environment Variables..." button.
+    *   Under "System variables", find the `Path` variable and click "Edit...".
+    *   Click "New" and add the following paths (adjusting `vX.Y` to your CUDA version):
+        *   `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y\bin`
+        *   `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\vX.Y\libnvvp` (Often included, good to have)
+    *   Click OK on all windows to save the changes.
+    *   **Restart your computer** for the PATH changes to take full effect.
+
+5.  **Verification (Optional):**
+    *   After restarting, open Command Prompt (`cmd`) and run `nvidia-smi`. This command should execute and display information about your NVIDIA GPU and the CUDA version detected by the driver. If this works, your driver and basic CUDA installation are likely correct. Persona Engine will attempt to use CUDA/cuDNN when it starts; check its console output for related messages.
+
+With CUDA and cuDNN correctly installed, Persona Engine should be able to utilize your NVIDIA GPU for significantly faster AI processing.
+
+### 3. Software to Install (Besides CUDA/Drivers)
 
 You need to install these two pieces of software on your system *before* running Persona Engine:
 
@@ -116,9 +166,9 @@ You need to install these two pieces of software on your system *before* running
         3.  **Important:** During installation, ensure you check the option to **"Add espeak-ng to the system PATH"**. This is the easiest way.
         4.  *Alternatively*, if you don't add it to PATH, you *must* manually specify the full path to `espeak-ng.dll` (or equivalent library file for your OS) in the `Tts.EspeakPath` setting within `appsettings.json`.
 
-### 3. ❗ Essential Models & Resources (Download Separately - Whisper Only!) ❗
+### 4. ❗ Essential Models & Resources (Download Separately - Whisper Only!) ❗
 
-The pre-built releases include almost everything you need, including TTS resources, VAD model, and even a free demo Live2D model to get you started quickly.
+The pre-built releases include almost everything you need, including TTS resources, VAD model, a demo Live2D model, and personality templates to get you started quickly.
 
 However, the **Whisper ASR models are large and must be downloaded separately.**
 
@@ -133,20 +183,25 @@ However, the **Whisper ASR models are large and must be downloaded separately.**
     *   **What:** The visual character files (`.model3.json`, textures, motions, physics, etc.).
     *   **Included:** Pre-built releases typically include a demo avatar (e.g., "Haru") located in `Resources/Live2D/Avatars/Haru/`. The default `appsettings.json` is usually configured to use this demo model.
     *   **Replacing:** To use your own avatar, create a new subfolder inside `Resources/Live2D/Avatars/` (e.g., `MyChar`) and place your model files there. Then, update the `Live2D.ModelName` setting in `appsettings.json` to match your folder name (e.g., `"ModelName": "MyChar"`).
+*   **Personality Prompts (Included - `personality.txt` and `personality_example.txt`):**
+    *   **What:** Text files defining the character's behavior for the LLM.
+    *   **`personality.txt`:** This is the **active** file the engine reads. It is initially configured for the fine-tuned model (see [Overview](#overview)).
+    *   **`personality_example.txt`:** This is a **template/starting point** provided for users using **standard** OpenAI-compatible LLMs. You'll likely need to modify or replace the contents of `personality.txt` using this example as a base if you aren't using the fine-tuned model.
+    *   **Where it is:** Located in `Resources/Prompts/`.
 *   **TTS Resources (Included):**
     *   **What:** Files needed for speech generation (voice models, phonemizers, sentence splitters).
-    *   **Where it is:** Typically located within `Resources/Models/TTS/`. You generally don't need to touch this unless replacing voices.
+    *   **Where it is:** Typically located within `Resources/Models/kokoro/`. You generally don't need to touch this.
 *   **VAD Model (Included):**
     *   **What:** The voice activity detection model (`silero_vad.onnx`).
     *   **Where it is:** Located in `Resources/Models/`.
 
-### 4. Optional: RVC Models (for Voice Cloning)
+### 5. Optional: RVC Models (for Voice Cloning)
 
 *   **What:** If you want to use Real-time Voice Cloning (RVC) to make the TTS output sound like a specific target voice, you need a trained RVC model exported to the **ONNX format**. This usually involves a `.onnx` file containing the voice model itself.
 *   **Note on `.pth` files:** Standard RVC training often produces `.pth` files. These **must be converted to ONNX** to be used with Persona Engine. If you need help with conversion, please **join our Discord**!
 *   **Where it goes:** Place the `.onnx` file inside the `Resources/Models/rvc/voice/` folder.
 
-### 5. LLM Access (The "Brain")
+### 6. LLM Access (The "Brain")
 
 *   **What:** You need access to a Large Language Model (LLM) API that can process chat-like requests. This involves:
     *   **API Endpoint URL:** The web address of the LLM service (e.g., `http://localhost:11434/v1` for a local Ollama+LiteLLM setup, or a cloud provider's URL).
@@ -155,9 +210,9 @@ However, the **Whisper ASR models are large and must be downloaded separately.**
 *   **Options:**
     *   **Local:** Run an LLM on your own PC (using tools like Ollama, LM Studio, llama.cpp, often with a proxy like LiteLLM to provide an OpenAI-compatible endpoint). Requires a powerful PC, especially GPU memory (VRAM).
     *   **Cloud:** Use a hosted service (OpenAI, Groq, Anthropic, Together AI, etc.). Often requires registration, API keys, and may incur costs based on usage.
-*   **Important Reminder:** The default `personality.txt` file is designed for a **specific fine-tuned model** (see [Overview](#overview)). Using standard models will likely require significant adjustments to `personality.txt` to get good, in-character results. Join the Discord for access/info on the fine-tuned model. You can edit the personality prompt in `Resources/Prompts/personality.txt`.
+*   **Important Reminder:** The default `personality.txt` file is designed for a **specific fine-tuned model** (see [Overview](#overview)). Using standard models will likely require significant adjustments to `personality.txt` to get good, in-character results. **A `Resources/Prompts/personality_example.txt` file is included to provide a basic structure and starting point if you need to write your `personality.txt` for a standard model.** Join the Discord for access/info on the fine-tuned model. You can edit the personality prompt in `Resources/Prompts/personality.txt`.
 
-### 6. Spout Receiver (To See Your Avatar)
+### 7. Spout Receiver (To See Your Avatar)
 
 *   **What:** Persona Engine **does not display the avatar in its own window**. Instead, it sends the visual output via **Spout**. You need another application capable of receiving a Spout stream to see your character.
 *   **Recommendation:** **OBS Studio** is commonly used for streaming and works well.
@@ -193,8 +248,9 @@ This is the simplest way to get started if you're on Windows and don't want to d
 
 **Step 2: Install Prerequisites (If you haven't already)**
 
-*   Make sure you have installed the **.NET 9.0 Runtime** (see [Prerequisites](#-prerequisites-what-you-need-before-you-start)).
-*   Make sure you have installed **`espeak-ng`** and added it to your system PATH (see [Prerequisites](#-prerequisites-what-you-need-before-you-start)). The engine needs this for TTS.
+*   Make sure you have installed the **NVIDIA Driver, CUDA Toolkit, and cuDNN** following the guide in the Prerequisites section if you plan to use GPU acceleration.
+*   Make sure you have installed the **.NET 9.0 Runtime** (see [Prerequisites](#3-software-to-install-besides-cudadrivers)).
+*   Make sure you have installed **`espeak-ng`** and added it to your system PATH (see [Prerequisites](#3-software-to-install-besides-cudadrivers)). The engine needs this for TTS.
 
 **Step 3: Download and Place Required Whisper Models**
 
@@ -212,16 +268,19 @@ This is the simplest way to get started if you're on Windows and don't want to d
         *   Set `TextModel`: The name of the LLM you want to use (e.g., `llama3`, `gpt-4o`).
         *   Set `TextApiKey`: Enter your API key *only if* your LLM service requires one (leave empty `""` otherwise).
     *   `Live2D` section:
-        *   Check the `ModelName` value. By default, it likely points to the included demo model (e.g., `"hiyori"`). If you want to use your *own* model later, you'll need to put its files in a folder under `Resources/Live2D/Avatars/` and change this setting to match your folder name.
+        *   Check the `ModelName` value. By default, it likely points to the included demo model (e.g., `"Haru"`). If you want to use your *own* model later, you'll need to put its files in a folder under `Resources/Live2D/Avatars/` and change this setting to match your folder name.
 *   Save the `appsettings.json` file.
-*   **(Optional but Recommended) Edit Personality:**
-    *   Navigate to `Resources/Prompts/` and open `personality.txt` with a text editor.
-    *   Modify this file to define your character's personality, background, and how it should respond. **Remember:** Significant prompt engineering might be needed if you aren't using the specially fine-tuned LLM (see [Overview](#overview)).
+*   **(Optional but Recommended) Configure Personality (`personality.txt`):**
+    *   Navigate to `Resources/Prompts/`. Here you will find `personality.txt` (the active file) and `personality_example.txt` (a template).
+    *   **Important:** If you are **not** using the specially fine-tuned LLM (which is not provided in public releases), the default content of `personality.txt` might not work well with standard models.
+    *   In this case, open and examine `personality_example.txt` with a text editor. This file provides a basic template suitable as a starting point for standard OpenAI-compatible models.
+    *   **You will likely need to copy the contents of `personality_example.txt` into `personality.txt` (overwriting the original content) and *then* modify `personality.txt`** to define your specific character's personality, background, rules, and how it should respond.
+    *   Remember: Significant prompt engineering in `personality.txt` might be needed to get good results with standard LLMs (see [Overview](#overview)).
 
 **Step 5: Run Persona Engine!**
 
 *   Double-click the `PersonaEngine.exe` file in the main folder.
-*   This will open the main **Configuration and Control UI**, *not* the avatar itself. The console window behind it shows detailed logs.
+*   This will open the main **Configuration and Control UI**, *not* the avatar itself. The console window behind it shows detailed logs. Check the console for messages about CUDA/GPU initialization if you set it up.
 *   If the LLM is reachable and the resources (especially Whisper models) are in the right place, the engine should initialize and start listening for your voice input. Try speaking into your microphone.
 
 **Step 6: View the Avatar (via Spout)**
@@ -242,24 +301,48 @@ This is the simplest way to get started if you're on Windows and don't want to d
 
 ### Method 2: Building from Source (Advanced / Developers / Other Platforms)
 
-*(This section remains largely the same, but ensure Step 5 includes placing the downloaded Whisper models, and Step 6 mentions editing `personality.txt`.)*
+*(This section requires updates to reflect the new structure)*
 
-... (rest of Method 2 instructions) ...
-
+1.  **Prerequisites:**
+    *   Install **Git**.
+    *   Install the **.NET 9.0 SDK** (Software Development Kit) from [Microsoft](https://dotnet.microsoft.com/download/dotnet/9.0).
+    *   Install **`espeak-ng`** and add to PATH (see [Prerequisites](#3-software-to-install-besides-cudadrivers)).
+    *   **Install NVIDIA Driver, CUDA Toolkit, and cuDNN** following the guide above if targeting GPU acceleration.
+    *   For non-Windows, find equivalent dependencies (PortAudio, Spout alternative like Syphon on macOS, check Whisper.net/Live2D Cubism Core requirements). This is **unsupported** and requires significant effort.
+2.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/fagenorn/handcrafted-persona-engine.git
+    cd handcrafted-persona-engine
+    ```
+3.  **Restore Dependencies:**
+    ```bash
+    dotnet restore
+    ```
+4.  **Build the Project:**
+    ```bash
+    # For a standard Release build:
+    dotnet publish PersonaEngine.App -c Release -o ./publish --self-contained false
+    # Add `-r win-x64` (or your target runtime) if not targeting default platform
+    ```
+5.  **Navigate to Output:**
+    *   The built application will be in the `./publish` directory (or the output directory you specified).
 6.  **Place Models & Resources:**
-    *   Navigate to the build output directory...
-    *   Create the `Resources` directory structure...
+    *   Navigate to the build output directory (e.g., `./publish`).
+    *   Create the necessary `Resources` directory structure (`Resources/Models`, `Resources/Live2D/Avatars`, `Resources/Prompts`).
     *   Download and place the required **Whisper GGUF models** (`ggml-tiny.en.bin`, `ggml-large-v3-turbo.bin`) into `Resources/Models/`.
     *   Place your Live2D model files into `Resources/Live2D/Avatars/YourModelName/`.
-    *   Ensure included resources (TTS, VAD) are copied correctly during the build or place them manually if needed.
-    *   Place optional RVC ONNX models where accessible.
+    *   Ensure included resources (TTS, VAD) are copied correctly during the build or place them manually if needed (check the `.csproj` files for included content). Copy `Resources/Models/kokoro` and `Resources/Models/silero_vad.onnx` from the source repo to your output `Resources/Models` folder.
+    *   Copy `Resources/Prompts/personality.txt` and `Resources/Prompts/personality_example.txt` from the source repo to your output `Resources/Prompts/` directory.
+    *   Place optional RVC ONNX models into `Resources/Models/rvc/voice/`.
 7.  **Configure `appsettings.json` and `personality.txt`:**
-    *   Copy or create `appsettings.json` in the build output directory.
+    *   Copy `appsettings.json` from the `PersonaEngine.App` project directory to the build output directory (`./publish`).
     *   Configure it following the same steps as in **Method 1, Step 4** (for essential LLM/Live2D settings).
-    *   Copy or create `Resources/Prompts/personality.txt` and edit it for your desired character.
-    *   Set paths for audio, TTS/RVC if needed.
+    *   **Crucially:** Edit `personality.txt` in your output `Resources/Prompts/` directory. If using a standard LLM, **copy the contents from `personality_example.txt` into `personality.txt`** and then modify `personality.txt` extensively for your desired character and model.
+    *   Set paths for audio, TTS/RVC if needed, especially `Tts.EspeakPath` if `espeak-ng` is not in the system PATH.
 8.  **Run the Application:**
-    *   ... (run command) ...
+    *   Open a terminal or command prompt in the build output directory (`./publish`).
+    *   Run the application: `dotnet PersonaEngine.App.dll`
+    *   Check the console output for initialization messages, including CUDA/GPU status.
     *   Remember to set up a Spout receiver (like OBS) to view the avatar output.
 
 ---
@@ -269,7 +352,7 @@ This is the simplest way to get started if you're on Windows and don't want to d
 The `appsettings.json` file controls most aspects of the engine. Open it in a text editor to adjust settings. Refer to the comments within the file (if available in the release) or the structure itself for guidance:
 
 *   `Window`: Dimensions, title, fullscreen.
-*   `Llm`: API keys, models, endpoints for text/vision. **Remember:** The default `personality.txt` is optimized for a specific fine-tuned model (see [Overview](#overview)). Adjust prompts if using other models.
+*   `Llm`: API keys, models, endpoints for text/vision. **Remember:** Adjust `personality.txt` prompts if using standard models (see `personality_example.txt` for a starting template).
 *   `Tts`: Paths for Whisper model, TTS models, Espeak library (`EspeakPath` if not in PATH). Voice settings (default voice `Voice`, speed). RVC settings.
 *   `Subtitle`: Font, size, colors, margins, animation, layout.
 *   `Live2D`: Path to avatars directory, `ModelName` (must match your avatar's folder name).
@@ -279,21 +362,22 @@ The `appsettings.json` file controls most aspects of the engine. Open it in a te
 
 ## ▶️ Usage
 
-1.  Ensure all **Prerequisites** are met (downloaded Whisper models, installed `.NET` and `espeak-ng`, Spout receiver ready).
-2.  Make sure `appsettings.json` is configured correctly with your LLM details and that resource files (Whisper models, Avatar) are placed correctly (see [Getting Started](#-getting-started)). Edit `Resources/Prompts/personality.txt` as needed.
-3.  Run the application using the appropriate method (`PersonaEngine.exe` for pre-built release, `dotnet PersonaEngine.App.dll` for source build).
-4.  The main **Configuration and Control UI** window will appear. The engine starts processing in the background (check the console window for logs). **The avatar is NOT displayed in this window.**
-5.  **Set up your Spout receiver application** (e.g., OBS Studio with the Spout2 Capture source pointing to the Persona Engine sender) to view the Live2D avatar output.
-6.  Speak into your configured microphone. The engine should:
+1.  Ensure all **Prerequisites** are met (downloaded Whisper models, installed `.NET`, `espeak-ng`, CUDA/cuDNN if using GPU, Spout receiver ready).
+2.  Make sure `appsettings.json` is configured correctly with your LLM details and that resource files (Whisper models, Avatar) are placed correctly (see [Getting Started](#-getting-started)).
+3.  Ensure `Resources/Prompts/personality.txt` is correctly set up for your chosen LLM (using `personality_example.txt` as a base if needed).
+4.  Run the application using the appropriate method (`PersonaEngine.exe` for pre-built release, `dotnet PersonaEngine.App.dll` for source build).
+5.  The main **Configuration and Control UI** window will appear. The engine starts processing in the background (check the console window for logs, including CUDA initialization). **The avatar is NOT displayed in this window.**
+6.  **Set up your Spout receiver application** (e.g., OBS Studio with the Spout2 Capture source pointing to the Persona Engine sender) to view the Live2D avatar output.
+7.  Speak into your configured microphone. The engine should:
     *   Detect when you start and stop speaking (VAD).
-    *   Transcribe your speech to text (Whisper).
+    *   Transcribe your speech to text (Whisper - using GPU).
     *   Send the text (and personality context from `personality.txt`) to the LLM.
     *   Receive a response from the LLM.
-    *   Convert the response text to speech (TTS, potentially using RVC if configured).
+    *   Convert the response text to speech (TTS, potentially using RVC if configured - using GPU).
     *   Play the spoken audio.
     *   Display subtitles (on the Spout output).
     *   Animate the avatar (basic mouth movement planned, visible via Spout).
-7.  Use the UI elements to monitor status or adjust settings on the fly if needed.
+8.  Use the UI elements to monitor status or adjust settings on the fly if needed.
 
 ## 💡 Potential Use Cases
 
@@ -315,5 +399,3 @@ Contributions are welcome! Please follow standard practices:
 6.  Open a Pull Request.
 
 Please ensure your code adheres to the project's coding style where applicable. Discuss potential changes or features in the Discord or via GitHub Issues first!
-
----
