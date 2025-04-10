@@ -32,6 +32,11 @@ public class FontProvider : IStartupTask
 
     private Texture2DManager _texture2DManager = null!;
 
+    // static FontProvider()
+    // {
+    //     FontSystemDefaults.FontLoader = new SixLaborsFontLoader();
+    // }
+
     public FontProvider(ILogger<FontProvider> logger) { _logger = logger; }
 
     public void Execute(GL gl) { _texture2DManager = new Texture2DManager(gl); }

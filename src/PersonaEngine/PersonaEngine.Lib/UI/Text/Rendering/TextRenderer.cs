@@ -43,11 +43,6 @@ internal class TextRenderer : IFontStashRenderer2, IDisposable
 
     private int _viewportWidth = 1200;
 
-    static TextRenderer()
-    {
-        // FontSystemDefaults.FontLoader = new SixLaborsFontLoader();
-    }
-
     public unsafe TextRenderer(GL glApi)
     {
         _gl = glApi;

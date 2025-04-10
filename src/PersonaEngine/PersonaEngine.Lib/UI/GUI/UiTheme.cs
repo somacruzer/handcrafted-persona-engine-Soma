@@ -62,7 +62,9 @@ public class UiTheme
 
     public float TabBorderSize { get; set; } = 0.0f;
 
-    public float TabMinWidthForCloseButton { get; set; } = 0.0f;
+    public float TabCloseButtonMinWidthSelected { get; set; } = 0.0f;
+
+    public float TabCloseButtonMinWidthUnselected { get; set; } = 0.0f;
 
     public string ColorButtonPosition { get; set; } = "Right";
 

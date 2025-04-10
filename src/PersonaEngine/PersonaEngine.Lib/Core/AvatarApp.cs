@@ -99,8 +99,7 @@ public class AvatarApp : IDisposable
 
         _spoutRegistry = new SpoutRegistry(_gl, _config.Value.SpoutConfigs);
 
-        _imGui = new ImGuiController(_gl, _window, _inputContext,
-                                     new ImGuiFontConfig(Path.Combine(@"Resources\Fonts", @"Montserrat-Medium.ttf"), [20]));
+        _imGui = new ImGuiController(_gl, _window, _inputContext, Path.Combine(@"Resources\Fonts", @"Montserrat-Medium.ttf"), Path.Combine(@"Resources\Fonts", @"seguiemj.ttf"));
 
         InitializeComponents(_regularComponents);
 

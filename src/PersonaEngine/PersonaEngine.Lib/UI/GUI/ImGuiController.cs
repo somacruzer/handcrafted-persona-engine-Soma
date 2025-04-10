@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 using Hexa.NET.ImGui;
+using Hexa.NET.ImGui.Utilities;
 using Hexa.NET.ImNodes;
 
 using PersonaEngine.Lib.UI.Common;
@@ -81,36 +82,53 @@ public class ImGuiController : IDisposable
     /// <summary>
     ///     Constructs a new ImGuiController with font configuration.
     /// </summary>
-    public ImGuiController(GL gl, IView view, IInputContext input, ImGuiFontConfig imGuiFontConfig) : this(gl, view, input, imGuiFontConfig, null) { }
+    public ImGuiController(GL gl, IView view, IInputContext input, string primaryFontPath, string emojiFontPath) : this(gl, view, input, primaryFontPath, emojiFontPath, null) { }
 
     /// <summary>
     ///     Constructs a new ImGuiController with an onConfigureIO Action.
     /// </summary>
-    public ImGuiController(GL gl, IView view, IInputContext input, Action? onConfigureIO) : this(gl, view, input, null, onConfigureIO) { }
+    public ImGuiController(GL gl, IView view, IInputContext input, Action? onConfigureIO) : this(gl, view, input, null, null, onConfigureIO) { }
 
     /// <summary>
     ///     Constructs a new ImGuiController with font configuration and onConfigure Action.
     /// </summary>
-    public ImGuiController(GL gl, IView view, IInputContext input, ImGuiFontConfig? imGuiFontConfig = null, Action? onConfigureIO = null)
+    public ImGuiController(GL gl, IView view, IInputContext input, string? primaryFontPath = null, string? emojiFontPath = null, Action? onConfigureIO = null)
     {
         Init(gl, view, input);
 
-        var io = ImGui.GetIO();
-        if ( imGuiFontConfig is not null )
-        {
-            unsafe
-            {
-                var glyphRange = imGuiFontConfig.Value.GetGlyphRange?.Invoke(io) ?? default;
+        var io          = ImGui.GetIO();
+        var fontBuilder = new ImGuiFontBuilder();
 
-                foreach ( var fontSize in imGuiFontConfig.Value.FontSizes )
-                {
-                    io.Fonts.AddFontFromFileTTF(imGuiFontConfig.Value.FontPath, fontSize, null, (uint*)glyphRange.ToPointer());
-                }
-            }
+        if ( primaryFontPath != null )
+        {
+ 
+                fontBuilder.AddFontFromFileTTF(primaryFontPath, 18f, [0x1, 0x1FFFF]);
+            
+        }
+        else
+        {
+            fontBuilder.AddDefaultFont();
         }
 
-        io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
-        io.ConfigFlags  |= ImGuiConfigFlags.DockingEnable;
+        if ( emojiFontPath != null )
+        {
+            fontBuilder.SetOption(config =>
+                                  {
+                                      config.FontBuilderFlags |= (uint)ImGuiFreeTypeBuilderFlags.LoadColor;
+                                      config.MergeMode        =  true;
+                                      config.PixelSnapH       =  true;
+                                  });
+
+            fontBuilder.AddFontFromFileTTF(emojiFontPath, 14f, [0x1, 0x1FFFF]);
+        }
+
+        _ = fontBuilder.Build();
+        io.Fonts.Build();
+
+        io.BackendFlags                 |= ImGuiBackendFlags.RendererHasVtxOffset;
+        io.ConfigFlags                  |= ImGuiConfigFlags.DockingEnable;
+        io.ConfigViewportsNoAutoMerge   =  false;
+        io.ConfigViewportsNoTaskBarIcon =  false;
 
         CreateDeviceResources();
 

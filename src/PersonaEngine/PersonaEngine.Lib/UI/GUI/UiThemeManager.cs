@@ -84,24 +84,25 @@ public class UiThemeManager : IUiThemeManager
             style.WindowMenuButtonPosition = ImGuiDir.Right;
         }
 
-        style.ChildRounding             = _currentTheme.ChildRounding;
-        style.ChildBorderSize           = _currentTheme.ChildBorderSize;
-        style.PopupRounding             = _currentTheme.PopupRounding;
-        style.PopupBorderSize           = _currentTheme.PopupBorderSize;
-        style.FrameRounding             = _currentTheme.FrameRounding;
-        style.FrameBorderSize           = _currentTheme.FrameBorderSize;
-        style.ItemSpacing               = _currentTheme.ItemSpacing;
-        style.ItemInnerSpacing          = _currentTheme.ItemInnerSpacing;
-        style.CellPadding               = _currentTheme.CellPadding;
-        style.IndentSpacing             = _currentTheme.IndentSpacing;
-        style.ColumnsMinSpacing         = _currentTheme.ColumnsMinSpacing;
-        style.ScrollbarSize             = _currentTheme.ScrollbarSize;
-        style.ScrollbarRounding         = _currentTheme.ScrollbarRounding;
-        style.GrabMinSize               = _currentTheme.GrabMinSize;
-        style.GrabRounding              = _currentTheme.GrabRounding;
-        style.TabRounding               = _currentTheme.TabRounding;
-        style.TabBorderSize             = _currentTheme.TabBorderSize;
-        style.TabMinWidthForCloseButton = _currentTheme.TabMinWidthForCloseButton;
+        style.ChildRounding                    = _currentTheme.ChildRounding;
+        style.ChildBorderSize                  = _currentTheme.ChildBorderSize;
+        style.PopupRounding                    = _currentTheme.PopupRounding;
+        style.PopupBorderSize                  = _currentTheme.PopupBorderSize;
+        style.FrameRounding                    = _currentTheme.FrameRounding;
+        style.FrameBorderSize                  = _currentTheme.FrameBorderSize;
+        style.ItemSpacing                      = _currentTheme.ItemSpacing;
+        style.ItemInnerSpacing                 = _currentTheme.ItemInnerSpacing;
+        style.CellPadding                      = _currentTheme.CellPadding;
+        style.IndentSpacing                    = _currentTheme.IndentSpacing;
+        style.ColumnsMinSpacing                = _currentTheme.ColumnsMinSpacing;
+        style.ScrollbarSize                    = _currentTheme.ScrollbarSize;
+        style.ScrollbarRounding                = _currentTheme.ScrollbarRounding;
+        style.GrabMinSize                      = _currentTheme.GrabMinSize;
+        style.GrabRounding                     = _currentTheme.GrabRounding;
+        style.TabRounding                      = _currentTheme.TabRounding;
+        style.TabBorderSize                    = _currentTheme.TabBorderSize;
+        style.TabCloseButtonMinWidthSelected   = _currentTheme.TabCloseButtonMinWidthSelected;
+        style.TabCloseButtonMinWidthUnselected = _currentTheme.TabCloseButtonMinWidthUnselected;
 
         // Handle ColorButtonPosition
         if ( _currentTheme.ColorButtonPosition == "Left" )
