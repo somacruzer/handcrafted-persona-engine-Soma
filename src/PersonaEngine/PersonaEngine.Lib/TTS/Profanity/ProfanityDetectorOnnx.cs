@@ -2,7 +2,7 @@
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Microsoft.ML.Tokenizers;
 
-namespace PersonaEngine.Lib.Profanity;
+namespace PersonaEngine.Lib.TTS.Profanity;
 
 public class ProfanityDetectorOnnx : IDisposable
 {

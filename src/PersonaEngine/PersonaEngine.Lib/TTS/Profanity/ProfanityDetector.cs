@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace PersonaEngine.Lib.Profanity;
+namespace PersonaEngine.Lib.TTS.Profanity;
 
 /// <summary>
 ///     A profanity detector that uses an ONNX model under the hood.

@@ -1,4 +1,4 @@
-﻿namespace PersonaEngine.Lib.Profanity;
+﻿namespace PersonaEngine.Lib.TTS.Profanity;
 
 /// <summary>
 ///     Holds benchmark statistics for a profanity detection run.

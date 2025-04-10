@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-using PersonaEngine.Lib.Profanity;
+using PersonaEngine.Lib.TTS.Profanity;
 using PersonaEngine.Lib.TTS.Synthesis;
 
 namespace PersonaEngine.Lib.TTS.Audio;
