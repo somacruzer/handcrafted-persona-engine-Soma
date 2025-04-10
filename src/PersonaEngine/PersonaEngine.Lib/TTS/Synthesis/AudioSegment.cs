@@ -10,6 +10,8 @@ public class AudioSegment
         Tokens     = tokens ?? Array.Empty<Token>();
     }
 
+    public Guid Id { get; init; } = Guid.NewGuid();
+
     public Memory<float> AudioData { get; set; }
 
     public int SampleRate { get; set; }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using PersonaEngine.Lib.Configuration;
+using PersonaEngine.Lib.LLM;
 
 namespace PersonaEngine.Lib.TTS.Synthesis;
 
@@ -25,6 +26,8 @@ public class TtsEngine : ITtsEngine
 
     private readonly IAudioSynthesizer _synthesizer;
 
+    private readonly IList<ITextFilter> _textFilters;
+
     private readonly ITextProcessor _textProcessor;
 
     private readonly SemaphoreSlim _throttle;
@@ -38,6 +41,7 @@ public class TtsEngine : ITtsEngine
         ITtsCache                           cache,
         IOptionsMonitor<KokoroVoiceOptions> options,
         IEnumerable<IAudioFilter>           audioFilters,
+        IEnumerable<ITextFilter>            textFilters,
         ILoggerFactory                      loggerFactory)
     {
         _textProcessor = textProcessor ?? throw new ArgumentNullException(nameof(textProcessor));
@@ -46,12 +50,22 @@ public class TtsEngine : ITtsEngine
         _cache         = cache ?? throw new ArgumentNullException(nameof(cache));
         _options       = options;
         _audioFilters  = audioFilters.OrderByDescending(x => x.Priority).ToList();
+        _textFilters   = textFilters.OrderByDescending(x => x.Priority).ToList();
         _logger        = loggerFactory?.CreateLogger<TtsEngine>() ?? throw new ArgumentNullException(nameof(loggerFactory));
 
         _throttle = new SemaphoreSlim(Environment.ProcessorCount, Environment.ProcessorCount);
     }
 
-    public void Dispose() { _throttle.Dispose(); }
+    public void Dispose()
+    {
+        if ( _disposed )
+        {
+            return;
+        }
+
+        _throttle.Dispose();
+        _disposed = true;
+    }
 
     /// <summary>
     ///     Synthesizes speech from a stream of text
@@ -114,7 +128,7 @@ public class TtsEngine : ITtsEngine
             {
                 continue;
             }
-
+            
             // Append to buffer
             textBuffer.Append(textChunk);
             var currentText = textBuffer.ToString();
@@ -184,8 +198,20 @@ public class TtsEngine : ITtsEngine
 
         try
         {
+            // Apply text filters before processing
+            var processedText     = sentence;
+            var textFilterResults = new List<TextFilterResult>(_textFilters.Count);
+
+            foreach ( var textFilter in _textFilters )
+            {
+                var filterResult = await textFilter.ProcessAsync(processedText, cancellationToken);
+                processedText = filterResult.ProcessedText;
+
+                textFilterResults.Add(filterResult);
+            }
+
             // Get phonemes
-            var phonemeResult = await _phonemizer.ToPhonemesAsync(sentence, cancellationToken);
+            var phonemeResult = await _phonemizer.ToPhonemesAsync(processedText, cancellationToken);
 
             // Process each phoneme chunk
             foreach ( var phonemeChunk in SplitPhonemes(phonemeResult.Phonemes, 510) )
@@ -203,10 +229,19 @@ public class TtsEngine : ITtsEngine
                                   audioData.PhonemeTimings);
 
                 // Return segment
-                yield return new AudioSegment(
-                                              audioData.Samples,
-                                              options?.SampleRate ?? _options.CurrentValue.SampleRate,
-                                              phonemeResult.Tokens);
+                var segment = new AudioSegment(
+                                               audioData.Samples,
+                                               options?.SampleRate ?? _options.CurrentValue.SampleRate,
+                                               phonemeResult.Tokens);
+
+                for ( var index = 0; index < _textFilters.Count; index++ )
+                {
+                    var textFilter       = _textFilters[index];
+                    var textFilterResult = textFilterResults[index];
+                    await textFilter.PostProcessAsync(textFilterResult, segment, cancellationToken);
+                }
+
+                yield return segment;
             }
         }
         finally

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 
 using Microsoft.Extensions.Logging;
 
@@ -8,20 +9,15 @@ namespace PersonaEngine.Lib.TTS.Synthesis;
 ///     High-performance sentence segmentation using both rule-based and ML approaches with
 ///     advanced handling of edge cases and text structures
 /// </summary>
-public class SentenceSegmenter : ISentenceSegmenter
+public partial class SentenceSegmenter(IMlSentenceDetector mlDetector, ILogger<SentenceSegmenter> logger) : ISentenceSegmenter
 {
-    // Minimum number of sentences we want to generate
     private const int MinimumSentences = 2;
 
-    private readonly ILogger<SentenceSegmenter> _logger;
+    private static readonly Regex SpecialTokenPattern = new(@"\[[A-Z]+:[^\]]+\]", RegexOptions.Compiled);
 
-    private readonly IMlSentenceDetector _mlDetector;
+    private readonly ILogger<SentenceSegmenter> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    public SentenceSegmenter(IMlSentenceDetector mlDetector, ILogger<SentenceSegmenter> logger)
-    {
-        _mlDetector = mlDetector ?? throw new ArgumentNullException(nameof(mlDetector));
-        _logger     = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly IMlSentenceDetector _mlDetector = mlDetector ?? throw new ArgumentNullException(nameof(mlDetector));
 
     /// <summary>
     ///     Segments text into sentences with optimized handling and pre-processing for boundary detection
@@ -75,24 +71,36 @@ public class SentenceSegmenter : ISentenceSegmenter
 
         try
         {
-            // Replace semicolons with periods
-            text = text.Replace(";", ".");
+            if ( !SpecialTokenPattern.IsMatch(text) )
+            {
+                // No special tokens - apply normal processing
+                return ApplyBasicPreprocessing(text);
+            }
 
-            // Replace colons with periods
-            text = text.Replace(":", ".");
+            var result          = new StringBuilder(text.Length + 20);
+            var currentPosition = 0;
 
-            // Replace dashes with periods (when surrounded by spaces)
-            text = text.Replace(" - ", ". ");
-            text = text.Replace(" – ", ". ");
-            text = text.Replace(" — ", ". ");
+            foreach ( Match match in SpecialTokenPattern.Matches(text) )
+            {
+                // Process the text between the last token and this one
+                if ( match.Index > currentPosition )
+                {
+                    var segment = text.Substring(currentPosition, match.Index - currentPosition);
+                    result.Append(ApplyBasicPreprocessing(segment));
+                }
 
-            // Replace commas followed by conjunctions that often indicate new clauses
-            // text = Regex.Replace(text, @",\s+(and|but|or|nor|yet|so)\s+", ". ");
+                // Append the token unchanged
+                result.Append(match.Value);
+                currentPosition = match.Index + match.Length;
+            }
 
-            // Ensure proper spacing after periods for the ML detector
-            text = Regex.Replace(text, @"\.([A-Za-z0-9])", ". $1");
+            if ( currentPosition < text.Length )
+            {
+                var segment = text[currentPosition..];
+                result.Append(ApplyBasicPreprocessing(segment));
+            }
 
-            return text;
+            return result.ToString();
         }
         catch (Exception ex)
         {
@@ -101,4 +109,28 @@ public class SentenceSegmenter : ISentenceSegmenter
             return text;
         }
     }
+
+    /// <summary>
+    ///     Applies basic preprocessing rules to a text segment without special tokens
+    /// </summary>
+    private string ApplyBasicPreprocessing(string text)
+    {
+        // Replace semicolons with periods
+        text = text.Replace(";", ".");
+
+        // Replace colons with periods
+        text = text.Replace(":", ".");
+
+        // Replace dashes with periods (when surrounded by spaces)
+        text = text.Replace(" - ", ". ");
+        text = text.Replace(" – ", ". ");
+        text = text.Replace(" — ", ". ");
+
+        // Ensure proper spacing after periods for the ML detector
+        text = TextAfterSpaceRegex().Replace(text, ". $1");
+
+        return text;
+    }
+
+    [GeneratedRegex(@"\.([A-Za-z0-9])")] private static partial Regex TextAfterSpaceRegex();
 }

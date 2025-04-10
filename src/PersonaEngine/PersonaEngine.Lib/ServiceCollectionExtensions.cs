@@ -16,9 +16,10 @@ using PersonaEngine.Lib.Audio.Player;
 using PersonaEngine.Lib.Configuration;
 using PersonaEngine.Lib.Core;
 using PersonaEngine.Lib.Live2D;
+using PersonaEngine.Lib.Live2D.Emotion;
 using PersonaEngine.Lib.LLM;
-using PersonaEngine.Lib.Profanity;
 using PersonaEngine.Lib.TTS.Audio;
+using PersonaEngine.Lib.TTS.Profanity;
 using PersonaEngine.Lib.TTS.RVC;
 using PersonaEngine.Lib.TTS.Synthesis;
 using PersonaEngine.Lib.UI;
@@ -50,6 +51,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddASRSystem(configuration);
         services.AddTTSSystem(configuration);
+        services.AddEmotionProcessing(configuration);
         services.AddRVC(configuration);
 #pragma warning disable SKEXP0010
         services.AddLLM(configuration, configureKernel);
@@ -270,6 +272,15 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IRVCVoiceProvider, RVCVoiceProvider>();
         services.AddSingleton<IAudioFilter, RVCFilter>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddEmotionProcessing(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IEmotionService, EmotionService>();
+        services.AddSingleton<ITextFilter, EmotionProcessor>();
+        services.AddSingleton<IAudioFilter, EmotionAudioFilter>();
 
         return services;
     }
