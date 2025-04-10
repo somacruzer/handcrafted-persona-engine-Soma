@@ -134,7 +134,6 @@ public class SemanticKernelChatEngine : IChatEngine
                     }
                     else
                     {
-                        prefixProcessed = true;
                         _logger.LogTrace("Received chunk {ChunkNumber}: {ChunkLength} characters", chunkCount, pendingBuffer.Length);
 
                         yield return pendingBuffer;
