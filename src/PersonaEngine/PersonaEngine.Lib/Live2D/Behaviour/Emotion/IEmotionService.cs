@@ -1,4 +1,4 @@
-﻿namespace PersonaEngine.Lib.Live2D.Emotion;
+﻿namespace PersonaEngine.Lib.Live2D.Behaviour.Emotion;
 
 /// <summary>
 /// Service that tracks emotion timings for audio segments

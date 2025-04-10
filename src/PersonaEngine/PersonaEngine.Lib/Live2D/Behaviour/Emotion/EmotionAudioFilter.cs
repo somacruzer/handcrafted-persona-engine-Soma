@@ -2,7 +2,7 @@
 
 using PersonaEngine.Lib.TTS.Synthesis;
 
-namespace PersonaEngine.Lib.Live2D.Emotion;
+namespace PersonaEngine.Lib.Live2D.Behaviour.Emotion;
 
 /// <summary>
 ///     Audio filter that attaches emotion data to segments during processing

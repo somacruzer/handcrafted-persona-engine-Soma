@@ -16,7 +16,9 @@ using PersonaEngine.Lib.Audio.Player;
 using PersonaEngine.Lib.Configuration;
 using PersonaEngine.Lib.Core;
 using PersonaEngine.Lib.Live2D;
-using PersonaEngine.Lib.Live2D.Emotion;
+using PersonaEngine.Lib.Live2D.Behaviour;
+using PersonaEngine.Lib.Live2D.Behaviour.Emotion;
+using PersonaEngine.Lib.Live2D.Behaviour.LipSync;
 using PersonaEngine.Lib.LLM;
 using PersonaEngine.Lib.TTS.Audio;
 using PersonaEngine.Lib.TTS.Profanity;
@@ -39,6 +41,7 @@ public static class ServiceCollectionExtensions
 
         services.AddConversation(configuration, configureKernel);
         services.AddUI(configuration);
+        services.AddLive2D(configuration);
         services.AddSystemAudioPlayer();
         // services.AddVBANStreamingPlayer();
 
@@ -217,11 +220,9 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration          configuration)
     {
-        services.Configure<Live2DOptions>(configuration.GetSection("Config:Live2D"));
         services.Configure<SubtitleOptions>(configuration.GetSection("Config:Subtitle"));
         services.Configure<RouletteWheelOptions>(configuration.GetSection("Config:RouletteWheel"));
 
-        services.AddSingleton<IRenderComponent, Live2DManager>();
         services.AddSingleton<IRenderComponent, SubtitleRenderer>();
         services.AddSingleton<RouletteWheel>();
         services.AddSingleton<IRenderComponent>(x => x.GetRequiredService<RouletteWheel>());
@@ -229,6 +230,18 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<FontProvider>();
         services.AddSingleton<IStartupTask>(x => x.GetRequiredService<FontProvider>());
+
+        return services;
+    }
+
+    public static IServiceCollection AddLive2D(
+        this IServiceCollection services,
+        IConfiguration          configuration)
+    {
+        services.Configure<Live2DOptions>(configuration.GetSection("Config:Live2D"));
+        
+        services.AddSingleton<IRenderComponent, Live2DManager>();
+        services.AddSingleton<ILive2DAnimationService, VBridgerLipSyncService>();
 
         return services;
     }

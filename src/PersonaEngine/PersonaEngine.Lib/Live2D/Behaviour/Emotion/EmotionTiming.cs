@@ -1,4 +1,4 @@
-﻿namespace PersonaEngine.Lib.Live2D.Emotion;
+﻿namespace PersonaEngine.Lib.Live2D.Behaviour.Emotion;
 
 /// <summary>
 /// Represents an emotion with its timestamp in the audio

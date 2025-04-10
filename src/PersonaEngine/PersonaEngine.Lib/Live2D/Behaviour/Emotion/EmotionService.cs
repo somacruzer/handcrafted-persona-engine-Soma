@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace PersonaEngine.Lib.Live2D.Emotion;
+namespace PersonaEngine.Lib.Live2D.Behaviour.Emotion;
 
 /// <summary>
 ///     Implementation of the emotion tracking service

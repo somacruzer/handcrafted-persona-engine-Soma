@@ -1,6 +1,6 @@
 ﻿using PersonaEngine.Lib.TTS.Synthesis;
 
-namespace PersonaEngine.Lib.Live2D.Emotion;
+namespace PersonaEngine.Lib.Live2D.Behaviour.Emotion;
 
 /// <summary>
 ///     Extension methods for accessing emotion data in audio segments

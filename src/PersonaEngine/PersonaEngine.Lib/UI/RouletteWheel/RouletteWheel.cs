@@ -123,6 +123,8 @@ public partial class RouletteWheel : IRenderComponent
 
     public string SpoutTarget => "RouletteWheel";
 
+    public int Priority => 0;
+
     public void Initialize(GL gl, IView view, IInputContext input)
     {
         _gl           = gl;

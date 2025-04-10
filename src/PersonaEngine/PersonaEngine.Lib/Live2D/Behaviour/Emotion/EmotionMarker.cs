@@ -1,4 +1,4 @@
-﻿namespace PersonaEngine.Lib.Live2D.Emotion;
+﻿namespace PersonaEngine.Lib.Live2D.Behaviour.Emotion;
 
 /// <summary>
 ///     Stores emotion data extracted from text with its position information

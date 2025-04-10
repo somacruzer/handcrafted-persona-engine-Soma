@@ -67,6 +67,8 @@ public class ConfigEditorComponent : IRenderComponent
 
     public string SpoutTarget => string.Empty;
 
+    public int Priority => 0;
+
     public void Initialize(GL gl, IView view, IInputContext input)
     {
         if ( _isInitialized )

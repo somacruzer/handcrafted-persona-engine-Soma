@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using PersonaEngine.Lib.LLM;
 using PersonaEngine.Lib.TTS.Synthesis;
 
-namespace PersonaEngine.Lib.Live2D.Emotion;
+namespace PersonaEngine.Lib.Live2D.Behaviour.Emotion;
 
 /// <summary>
 ///     Processor for extracting emotion tags from text before TTS synthesis

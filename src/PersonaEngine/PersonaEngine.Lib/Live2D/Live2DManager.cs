@@ -3,8 +3,9 @@
 using PersonaEngine.Lib.Audio.Player;
 using PersonaEngine.Lib.Configuration;
 using PersonaEngine.Lib.Live2D.App;
+using PersonaEngine.Lib.Live2D.Behaviour;
+using PersonaEngine.Lib.Live2D.Behaviour.LipSync;
 using PersonaEngine.Lib.Live2D.Framework.Rendering;
-using PersonaEngine.Lib.Live2D.LipSync;
 using PersonaEngine.Lib.UI;
 
 using Silk.NET.Input;
@@ -24,17 +25,20 @@ public class Live2DManager : IRenderComponent
 
     private LAppDelegate _lapp;
 
-    private LipSyncManager _lipSyncManager;
+    private IList<ILive2DAnimationService> _live2DAnimationServices;
 
-    public Live2DManager(IOptionsMonitor<Live2DOptions> options, IStreamingAudioPlayerHost audioPlayer)
+    public Live2DManager(IOptionsMonitor<Live2DOptions> options, IEnumerable<ILive2DAnimationService> live2DAnimationServices,IStreamingAudioPlayerHost audioPlayer)
     {
         _options     = options;
+        _live2DAnimationServices = live2DAnimationServices.ToList();
         _audioPlayer = audioPlayer;
     }
 
     public bool UseSpout => true;
 
     public string SpoutTarget => "Live2D";
+
+    public int Priority => 100;
 
     public void Update(float deltaTime) { }
 
@@ -71,14 +75,16 @@ public class Live2DManager : IRenderComponent
         var model = _lapp.Live2dManager.LoadModel(modelPath, modelName);
         model.CustomValueUpdate = true;
 
-        model.ModelMatrix.Translate(0.0f, -1.8f);
-        model.ModelMatrix.ScaleRelative(2.5f, 2.5f);
+        // model.ModelMatrix.Translate(0.0f, -1.8f);
+        // model.ModelMatrix.ScaleRelative(2.5f, 2.5f);
 
         Resize();
 
-        _lipSyncManager = new LipSyncManager(model);
-        RegisterLipSync(_audioPlayer);
+        foreach ( var animationService in _live2DAnimationServices )
+        {
+            animationService.SubscribeToAudioPlayerHost(_audioPlayer);
+            model.ValueUpdate += _ => animationService.Update(LAppPal.DeltaTime);
+            animationService.Start(model);
+        }
     }
-
-    public void RegisterLipSync(IStreamingAudioPlayerHost audioPlayer) { _lipSyncManager.SubscribeToAudioPlayer(audioPlayer); }
 }

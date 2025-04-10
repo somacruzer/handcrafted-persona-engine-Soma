@@ -61,6 +61,8 @@ public class SubtitleRenderer : IRenderComponent
 
     public string SpoutTarget => "Live2D";
 
+    public int Priority => -100;
+
     public void Initialize(GL gl, IView view, IInputContext input)
     {
         _gl           = gl;

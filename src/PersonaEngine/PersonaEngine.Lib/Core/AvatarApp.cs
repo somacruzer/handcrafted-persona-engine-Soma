@@ -41,7 +41,7 @@ public class AvatarApp : IDisposable
     {
         _config = config;
 
-        var allComponents = renderComponents.ToList();
+        var allComponents = renderComponents.OrderByDescending(x => x.Priority).ToList();
 
         // Group components by spout target
         _regularComponents = allComponents.Where(x => !x.UseSpout).ToList();
