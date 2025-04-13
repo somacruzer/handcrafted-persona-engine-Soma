@@ -97,6 +97,19 @@ public class AggregatedStreamingAudioPlayer : IAggregatedStreamingAudioPlayer
         await MulticastPlaybackAsync(audioSegments, cancellationToken);
     }
 
+    public async Task StopPlaybackAsync()
+    {
+        ThrowIfDisposed();
+        
+        if ( _players.Count == 0 )
+        {
+            return;
+        }
+        
+        // Stop playback for all players
+        await Task.WhenAll(_players.Select(p => p.StopPlaybackAsync()));
+    }
+
     public async ValueTask DisposeAsync()
     {
         if ( _disposed )

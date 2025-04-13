@@ -12,6 +12,8 @@ public class AudioPlaybackEventArgs : EventArgs
 public interface IStreamingAudioPlayer : IAsyncDisposable
 {
     Task StartPlaybackAsync(IAsyncEnumerable<AudioSegment> audioSegments, CancellationToken cancellationToken = default);
+
+    public Task StopPlaybackAsync();
 }
 
 public interface IStreamingAudioPlayerHost

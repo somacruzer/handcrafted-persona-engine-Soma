@@ -134,6 +134,11 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
         }
     }
 
+    public Task StopPlaybackAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     ///     Disposes resources used by the player.
     /// </summary>
