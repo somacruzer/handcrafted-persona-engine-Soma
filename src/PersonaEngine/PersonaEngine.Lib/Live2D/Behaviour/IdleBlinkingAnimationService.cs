@@ -291,10 +291,9 @@ public sealed class IdleBlinkingAnimationService : ILive2DAnimationService
             }
             else
             {
-                _logger.LogWarning("Failed to start idle motion for group '{IdleGroup}'. The group might be empty or invalid.", IDLE_MOTION_GROUP);
-
+                // _logger.LogWarning("Failed to start idle motion for group '{IdleGroup}'. The group might be empty or invalid.", IDLE_MOTION_GROUP);
                 // Optionally disable idle animations if it fails consistently?
-                // We don't because sometimes this occurs when another animation with the same priority is also playing.
+                // We don't because sometimes this occurs when another animation with the same or higher priority is also playing.
                 // _isIdleAnimationAvailable = false;
             }
         }
