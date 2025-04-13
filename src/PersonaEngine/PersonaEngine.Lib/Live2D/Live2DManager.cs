@@ -73,11 +73,12 @@ public class Live2DManager : IRenderComponent
     public void LoadModel(string modelPath, string modelName)
     {
         var model = _lapp.Live2dManager.LoadModel(modelPath, modelName);
+        model.RandomMotion = false;
         model.CustomValueUpdate = true;
 
         // model.ModelMatrix.Translate(0.0f, -1.8f);
-        // model.ModelMatrix.ScaleRelative(2.5f, 2.5f);
-
+        model.ModelMatrix.ScaleRelative(0.7f,0.7f);
+        
         Resize();
 
         foreach ( var animationService in _live2DAnimationServices )

@@ -1,13 +1,7 @@
 ﻿namespace PersonaEngine.Lib.Live2D.Framework.Motion;
 
-/// <summary>
-///     CubismMotionQueueManagerで再生している各モーションの管理クラス。
-/// </summary>
 public class CubismMotionQueueEntry
 {
-    /// <summary>
-    ///     コンストラクタ。
-    /// </summary>
     public CubismMotionQueueEntry()
     {
         Available = true;
@@ -16,52 +10,52 @@ public class CubismMotionQueueEntry
     }
 
     /// <summary>
-    ///     モーション
+    ///     Motion
     /// </summary>
     public required ACubismMotion Motion { get; set; }
 
     /// <summary>
-    ///     有効化フラグ
+    ///     Activation flag
     /// </summary>
     public bool Available { get; set; }
 
     /// <summary>
-    ///     終了フラグ
+    ///     Completion flag
     /// </summary>
     public bool Finished { get; set; }
 
     /// <summary>
-    ///     開始フラグ（0.9.00以降）
+    ///     Start flag (since 0.9.00)
     /// </summary>
     public bool Started { get; set; }
 
     /// <summary>
-    ///     モーション再生開始時刻[秒]
+    ///     Motion playback start time [seconds]
     /// </summary>
     public float StartTime { get; set; }
 
     /// <summary>
-    ///     フェードイン開始時刻（ループの時は初回のみ）[秒]
+    ///     Fade-in start time (only the first time for loops) [seconds]
     /// </summary>
     public float FadeInStartTime { get; set; }
 
     /// <summary>
-    ///     終了予定時刻[秒]
+    ///     Scheduled end time [seconds]
     /// </summary>
     public float EndTime { get; set; }
 
     /// <summary>
-    ///     時刻の状態[秒]
+    ///     Time state [seconds]
     /// </summary>
     public float StateTime { get; private set; }
 
     /// <summary>
-    ///     重みの状態
+    ///     Weight state
     /// </summary>
     public float StateWeight { get; private set; }
 
     /// <summary>
-    ///     最終のMotion側のチェックした時間
+    ///     Last time checked by the Motion side
     /// </summary>
     public float LastEventCheckSeconds { get; set; }
 
@@ -70,9 +64,9 @@ public class CubismMotionQueueEntry
     public bool IsTriggeredFadeOut { get; private set; }
 
     /// <summary>
-    ///     フェードアウトの開始を設定する。
+    ///     Set the start of fade-out.
     /// </summary>
-    /// <param name="fadeOutSeconds">フェードアウトにかかる時間[秒]</param>
+    /// <param name="fadeOutSeconds">Time required for fade-out [seconds]</param>
     public void SetFadeout(float fadeOutSeconds)
     {
         FadeOutSeconds     = fadeOutSeconds;
@@ -80,10 +74,10 @@ public class CubismMotionQueueEntry
     }
 
     /// <summary>
-    ///     フェードアウトを開始する。
+    ///     Start fade-out.
     /// </summary>
-    /// <param name="fadeOutSeconds">フェードアウトにかかる時間[秒]</param>
-    /// <param name="userTimeSeconds">デルタ時間の積算値[秒]</param>
+    /// <param name="fadeOutSeconds">Time required for fade-out [seconds]</param>
+    /// <param name="userTimeSeconds">Accumulated delta time [seconds]</param>
     public void StartFadeout(float fadeOutSeconds, float userTimeSeconds)
     {
         var newEndTimeSeconds = userTimeSeconds + fadeOutSeconds;
@@ -96,10 +90,10 @@ public class CubismMotionQueueEntry
     }
 
     /// <summary>
-    ///     モーションの状態を設定する。
+    ///     Set the motion state.
     /// </summary>
-    /// <param name="timeSeconds">現在時刻[秒]</param>
-    /// <param name="weight">モーションの重み</param>
+    /// <param name="timeSeconds">Current time [seconds]</param>
+    /// <param name="weight">Motion weight</param>
     public void SetState(float timeSeconds, float weight)
     {
         StateTime   = timeSeconds;

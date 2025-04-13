@@ -30,9 +30,11 @@ public enum MotionPriority
 
     PriorityIdle = 1,
 
-    PriorityNormal = 2,
+    PriorityLow = 2,
+    
+    PriorityNormal = 3,
 
-    PriorityForce = 3
+    PriorityForce = 4
 }
 
 /// <summary>

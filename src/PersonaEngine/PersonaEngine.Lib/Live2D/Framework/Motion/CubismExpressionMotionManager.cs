@@ -85,8 +85,7 @@ public class CubismExpressionMotionManager : CubismMotionQueueManager
         var expressionWeight = 0.0f;
         var expressionIndex  = 0;
 
-        // ------- 処理を行う --------
-        // 既にモーションがあれば終了フラグを立てる
+        // If there is already a motion, set the end flag
         var list = new List<CubismMotionQueueEntry>();
         foreach ( var item in motions )
         {
@@ -127,13 +126,13 @@ public class CubismExpressionMotionManager : CubismMotionQueueManager
                         continue;
                     }
 
-                    // パラメータがリストに存在しないなら新規追加
+                    // If the parameter does not exist in the list, add it.
                     ExpressionParameterValue item1 = new() { ParameterId = expressionParameters[i].ParameterId, AdditiveValue = CubismExpressionMotion.DefaultAdditiveValue, MultiplyValue = CubismExpressionMotion.DefaultMultiplyValue };
                     item1.OverwriteValue = model.GetParameterValue(item1.ParameterId);
                     _expressionParameterValues.Add(item1);
                 }
             }
-
+            
             // ------ 値を計算する ------
             expressionMotion.SetupMotionQueueEntry(item, UserTimeSeconds);
             _fadeWeights[expressionIndex] = expressionMotion.UpdateFadeWeight(item, UserTimeSeconds);

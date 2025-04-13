@@ -50,7 +50,18 @@ public class LAppModel : CubismUserModel
     /// </summary>
     public LAppWavFileHandler _wavFileHandler = new();
 
-    public Action<LAppModel>? ValueUpdate;
+    public static string GetMotionGroupName(string motionName)
+    {
+        var underscoreIndex = motionName.LastIndexOf('_');
+        if ( underscoreIndex > 0 && int.TryParse(motionName.AsSpan(underscoreIndex + 1), out _) )
+        {
+            return motionName[..underscoreIndex];
+        }
+
+        return motionName; // Treat whole name as group if no "_Number" suffix
+    }
+    
+    public        Action<LAppModel>? ValueUpdate;
 
     public LAppModel(LAppDelegate lapp, string dir, string fileName)
     {
@@ -417,7 +428,7 @@ public class LAppModel : CubismUserModel
         }
 
         // 呼吸など
-        _breath?.UpdateParameters(Model, deltaTimeSeconds);
+        // _breath?.UpdateParameters(Model, deltaTimeSeconds);
 
         // 物理演算の設定
         _physics?.Evaluate(Model, deltaTimeSeconds);
@@ -468,13 +479,13 @@ public class LAppModel : CubismUserModel
     }
 
     /// <summary>
-    ///     引数で指定したモーションの再生を開始する。
+    ///     Starts playing the motion specified by the argument.
     /// </summary>
-    /// <param name="group">モーショングループ名</param>
-    /// <param name="no">グループ内の番号</param>
-    /// <param name="priority">優先度</param>
-    /// <param name="onFinishedMotionHandler">モーション再生終了時に呼び出されるコールバック関数。NULLの場合、呼び出されない。</param>
-    /// <returns>開始したモーションの識別番号を返す。個別のモーションが終了したか否かを判定するIsFinished()の引数で使用する。開始できない時は「-1」</returns>
+    /// <param name="group">Motion Group Name</param>
+    /// <param name="no">Number in group</param>
+    /// <param name="priority">Priority</param>
+    /// <param name="onFinishedMotionHandler">The callback function that is called when the motion playback ends. If NULL, it will not be called.</param>
+    /// <returns>Returns the identification number of the started motion. Used as an argument for IsFinished() to determine whether an individual motion has finished. Returns "-1" if the motion cannot be started.</returns>
     public CubismMotionQueueEntry? StartMotion(string name, MotionPriority priority, FinishedMotionCallback? onFinishedMotionHandler = null)
     {
         var temp = name.Split("_");
@@ -550,13 +561,13 @@ public class LAppModel : CubismUserModel
     }
 
     /// <summary>
-    ///     ランダムに選ばれたモーションの再生を開始する。
+    ///     Starts playing a randomly selected motion.
     /// </summary>
-    /// <param name="group">モーショングループ名</param>
-    /// <param name="priority">優先度</param>
-    /// <param name="onFinishedMotionHandler">モーション再生終了時に呼び出されるコールバック関数。NULLの場合、呼び出されない。</param>
-    /// <returns>開始したモーションの識別番号を返す。個別のモーションが終了したか否かを判定するIsFinished()の引数で使用する。開始できない時は「-1」</returns>
-    public object? StartRandomMotion(string group, MotionPriority priority, FinishedMotionCallback? onFinishedMotionHandler = null)
+    /// <param name="group">Motion Group Name</param>
+    /// <param name="priority">Priority</param>
+    /// <param name="onFinishedMotionHandler">A callback function that is called when the priority motion playback ends. If NULL, it will not be called.</param>
+    /// <returns>Returns the identification number of the started motion. Used as an argument for IsFinished() to determine whether an individual motion has finished. Returns "-1" if the motion cannot be started.</returns>
+    public CubismMotionQueueEntry? StartRandomMotion(string group, MotionPriority priority, FinishedMotionCallback? onFinishedMotionHandler = null)
     {
         if ( _modelSetting.FileReferences?.Motions?.ContainsKey(group) == true )
         {
@@ -567,11 +578,16 @@ public class LAppModel : CubismUserModel
 
         return null;
     }
+    
+    public bool IsMotionFinished(CubismMotionQueueEntry entry)
+    {
+        return _motionManager.IsFinished(entry);
+    }
 
     /// <summary>
-    ///     引数で指定した表情モーションをセットする
+    ///     Sets the facial motion specified by the argument.
     /// </summary>
-    /// <param name="expressionID">表情モーションのID</param>
+    /// <param name="expressionID">Facial expression motion ID</param>
     public void SetExpression(string expressionID)
     {
         var motion = _expressions[expressionID];
@@ -588,7 +604,7 @@ public class LAppModel : CubismUserModel
     }
 
     /// <summary>
-    ///     ランダムに選ばれた表情モーションをセットする
+    ///     Set a randomly selected facial expression motion
     /// </summary>
     public void SetRandomExpression()
     {
