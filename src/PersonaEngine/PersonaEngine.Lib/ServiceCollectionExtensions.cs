@@ -54,7 +54,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddASRSystem(configuration);
         services.AddTTSSystem(configuration);
-        services.AddEmotionProcessing(configuration);
         services.AddRVC(configuration);
 #pragma warning disable SKEXP0010
         services.AddLLM(configuration, configureKernel);
@@ -239,9 +238,11 @@ public static class ServiceCollectionExtensions
         IConfiguration          configuration)
     {
         services.Configure<Live2DOptions>(configuration.GetSection("Config:Live2D"));
-        
+
         services.AddSingleton<IRenderComponent, Live2DManager>();
         services.AddSingleton<ILive2DAnimationService, VBridgerLipSyncService>();
+        services.AddSingleton<ILive2DAnimationService, IdleBlinkingAnimationService>();
+        services.AddEmotionProcessing(configuration);
 
         return services;
     }
@@ -294,6 +295,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IEmotionService, EmotionService>();
         services.AddSingleton<ITextFilter, EmotionProcessor>();
         services.AddSingleton<IAudioFilter, EmotionAudioFilter>();
+        services.AddSingleton<ILive2DAnimationService, EmotionAnimationService>();
 
         return services;
     }

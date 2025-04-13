@@ -32,7 +32,7 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
 
     private Task? _playbackTask;
 
-    private volatile PlayerState _state = PlayerState.Uninitialized;
+    public PlayerState State { get; private set; } = PlayerState.Uninitialized;
 
     /// <summary>
     ///     Creates a new instance of VBANAudioPlayer.
@@ -62,7 +62,7 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
         // Set initial state
         lock (_stateLock)
         {
-            _state = PlayerState.Initialized;
+            State = PlayerState.Initialized;
         }
     }
 
@@ -99,7 +99,7 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
             // Set up new playback state
             lock (_stateLock)
             {
-                _state = PlayerState.Starting;
+                State = PlayerState.Starting;
             }
 
             _playbackCts?.Dispose();
@@ -114,7 +114,7 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
 
             lock (_stateLock)
             {
-                _state = PlayerState.Playing;
+                State = PlayerState.Playing;
             }
 
             await producerTask.ConfigureAwait(false);
@@ -212,9 +212,9 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
 
         lock (_stateLock)
         {
-            if ( _state is PlayerState.Playing or PlayerState.Starting )
+            if ( State is PlayerState.Playing or PlayerState.Starting )
             {
-                _state     = PlayerState.Stopping;
+                State     = PlayerState.Stopping;
                 shouldStop = true;
             }
         }
@@ -261,7 +261,7 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
 
         lock (_stateLock)
         {
-            _state = PlayerState.Stopped;
+            State = PlayerState.Stopped;
         }
     }
 
@@ -284,7 +284,7 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
                 var isPlaying = false;
                 lock (_stateLock)
                 {
-                    isPlaying = _state is PlayerState.Playing or PlayerState.Starting;
+                    isPlaying = State is PlayerState.Playing or PlayerState.Starting;
                 }
 
                 if ( !isPlaying ||
@@ -295,7 +295,7 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
                         // Playback is complete
                         lock (_stateLock)
                         {
-                            _state = PlayerState.Stopped;
+                            State = PlayerState.Stopped;
                         }
 
                         break;
@@ -415,7 +415,7 @@ public class VBANAudioPlayer : IStreamingAudioPlayer, IStreamingAudioPlayerHost
 
             lock (_stateLock)
             {
-                _state = PlayerState.Error;
+                State = PlayerState.Error;
             }
         }
     }

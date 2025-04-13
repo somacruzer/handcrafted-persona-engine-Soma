@@ -17,6 +17,8 @@ public interface IStreamingAudioPlayer : IAsyncDisposable
 public interface IStreamingAudioPlayerHost
 {
     float CurrentTime { get; }
+    
+    PlayerState State { get; }
 
     event EventHandler<AudioPlaybackEventArgs>? OnPlaybackStarted;
 

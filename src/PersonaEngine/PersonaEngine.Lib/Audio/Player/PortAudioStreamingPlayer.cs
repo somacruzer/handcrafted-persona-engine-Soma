@@ -67,7 +67,7 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
 
     private volatile bool _producerCompleted; // Flag indicating the producer task finished adding segments for the *current* playback
 
-    private PlayerState _state = PlayerState.Uninitialized;
+    public PlayerState State { get; private set; } = PlayerState.Uninitialized;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="PortAudioStreamingPlayer" /> class.
@@ -180,7 +180,7 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
                     throw new ObjectDisposedException(nameof(PortAudioStreamingPlayer));
                 }
 
-                _state             = PlayerState.Starting;
+                State             = PlayerState.Starting;
                 _producerCompleted = false;
                 _playbackCts?.Dispose(); // Dispose previous CTS
                 _playbackCts        = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -219,9 +219,9 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
 
             lock (_stateLock)
             {
-                if ( _state == PlayerState.Starting )
+                if ( State == PlayerState.Starting )
                 {
-                    _state = PlayerState.Playing;
+                    State = PlayerState.Playing;
                 }
             }
 
@@ -289,9 +289,9 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
 
             lock (_stateLock)
             {
-                if ( _state == PlayerState.Playing || _state == PlayerState.Starting )
+                if ( State == PlayerState.Playing || State == PlayerState.Starting )
                 {
-                    _state = PlayerState.Stopped;
+                    State = PlayerState.Stopped;
                 }
             }
 
@@ -367,10 +367,10 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
         var needsTermination = false;
         lock (_stateLock)
         {
-            if ( _state != PlayerState.Uninitialized )
+            if ( State != PlayerState.Uninitialized )
             {
                 needsTermination = true;
-                _state           = PlayerState.Uninitialized;
+                State           = PlayerState.Uninitialized;
             }
         }
 
@@ -401,7 +401,7 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
     {
         get
         {
-            if ( _isDisposed || _state == PlayerState.Uninitialized )
+            if ( _isDisposed || State == PlayerState.Uninitialized )
             {
                 return 0f;
             }
@@ -463,9 +463,9 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
         lock (_stateLock)
         {
             queueToStop  = _audioQueue;
-            currentState = _state;
+            currentState = State;
             // ... (rest of the state checks remain the same) ...
-            if ( _state == PlayerState.Stopping && !isDisposing )
+            if ( State == PlayerState.Stopping && !isDisposing )
             {
                 _logger.LogDebug("Stop already in progress.");
 
@@ -475,7 +475,7 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
                 return;
             }
 
-            _state                    = PlayerState.Stopping;
+            State                    = PlayerState.Stopping;
             currentPlaybackCts        = _playbackCts;
             currentPlaybackCompletion = _playbackCompletion; // Capture the TCS
         }
@@ -536,10 +536,10 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
         // 6. Final State Update (No longer need to signal TCS here)
         lock (_stateLock)
         {
-            if ( _state == PlayerState.Stopping )
+            if ( State == PlayerState.Stopping )
             {
-                _state = isDisposing ? PlayerState.Uninitialized : PlayerState.Stopped;
-                _logger.LogDebug("State set to {NewState}", _state);
+                State = isDisposing ? PlayerState.Uninitialized : PlayerState.Stopped;
+                _logger.LogDebug("State set to {NewState}", State);
             }
 
             if ( !isStartingNew && !isDisposing )
@@ -882,9 +882,9 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
     {
         lock (_stateLock) // Lock ensures state transitions are safe if called concurrently (shouldn't be)
         {
-            if ( _state != PlayerState.Uninitialized )
+            if ( State != PlayerState.Uninitialized )
             {
-                _logger.LogWarning("PortAudio already initialized or in an unexpected state ({State}). Skipping initialization.", _state);
+                _logger.LogWarning("PortAudio already initialized or in an unexpected state ({State}). Skipping initialization.", State);
 
                 return;
             }
@@ -920,13 +920,13 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
                                           AudioCallback,       // Our callback function
                                           IntPtr.Zero);        // No user data passed directly to callback
 
-                _state = PlayerState.Initialized;
+                State = PlayerState.Initialized;
                 _logger.LogInformation("PortAudio initialized successfully, stream created.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to initialize PortAudio or create stream.");
-                _state = PlayerState.Error; // Mark state as error
+                State = PlayerState.Error; // Mark state as error
                 try
                 {
                     // Attempt cleanup if initialization failed mid-way
@@ -951,13 +951,13 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
                 throw new ObjectDisposedException(nameof(PortAudioStreamingPlayer));
             }
 
-            if ( _state != PlayerState.Initialized && _state != PlayerState.Starting && _state != PlayerState.Stopped )
+            if ( State != PlayerState.Initialized && State != PlayerState.Starting && State != PlayerState.Stopped )
             {
-                _logger.LogWarning("Cannot start audio stream in state {State}", _state);
+                _logger.LogWarning("Cannot start audio stream in state {State}", State);
                 // Allow starting from Stopped state if restarting playback
-                if ( _state != PlayerState.Stopped )
+                if ( State != PlayerState.Stopped )
                 {
-                    throw new InvalidOperationException($"Cannot start audio stream in the current state: {_state}");
+                    throw new InvalidOperationException($"Cannot start audio stream in the current state: {State}");
                 }
             }
 
@@ -1021,7 +1021,7 @@ public sealed class PortAudioStreamingPlayer : IStreamingAudioPlayer, IStreaming
         lock (_stateLock)
         {
             _logger.LogError(ex, "Player transitioning to Error state.");
-            _state = PlayerState.Error;
+            State = PlayerState.Error;
         }
 
         // Optionally, signal completion with error if a playback was active
