@@ -8,6 +8,8 @@ public record AvatarAppConfig
 
     public TtsConfiguration Tts { get; set; } = new();
 
+    public AsrConfiguration Asr { get; set; } = new();
+
     public SubtitleOptions Subtitle { get; set; } = new();
 
     public Live2DOptions Live2D { get; set; } = new();

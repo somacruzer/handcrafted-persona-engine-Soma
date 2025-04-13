@@ -1,5 +1,7 @@
 using System.Globalization;
 
+using PersonaEngine.Lib.Configuration;
+
 namespace PersonaEngine.Lib.ASR.Transcriber;
 
 public record SpeechTranscriptorOptions
@@ -11,4 +13,6 @@ public record SpeechTranscriptorOptions
     public CultureInfo Language { get; set; } = CultureInfo.GetCultureInfo("en-us");
 
     public string? Prompt { get; set; }
+    
+    public WhisperConfigTemplate? Template { get; set; }
 }

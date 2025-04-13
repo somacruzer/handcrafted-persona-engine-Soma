@@ -69,34 +69,44 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddASRSystem(this IServiceCollection services, IConfiguration configuration)
     {
-        var realtimeSpeechTranscriptorOptions = new RealtimeSpeechTranscriptorOptions {
-                                                                                          AutodetectLanguageOnce        = false,                    // Flag to detect the language only once or for each segment
-                                                                                          IncludeSpeechRecogizingEvents = true,                     // Flag to include speech recognizing events (RealtimeSegmentRecognizing)
-                                                                                          RetrieveTokenDetails          = false,                    // Flag to retrieve token details
-                                                                                          LanguageAutoDetect            = false,                    // Flag to auto-detect the language
-                                                                                          Language                      = new CultureInfo("en-US"), // Language to use for transcription
-                                                                                          Prompt                        = "Aria, Joobel, Aksel"
-                                                                                      };
+        services.Configure<AsrConfiguration>(configuration.GetSection("Config:Asr"));
 
-        var siletroOptions = new SileroVadOptions(ModelUtils.GetModelPath(ModelType.Silero)) {
-                                                                                                 Threshold    = 0.5f, // The threshold for Silero VAD. The default is 0.5f.
-                                                                                                 ThresholdGap = 0.15f // The threshold gap for Silero VAD. The default is 0.15f.
-                                                                                             };
+        services.AddSingleton<IVadDetector>(sp =>
+                                            {
+                                                var asrOptions = sp.GetRequiredService<IOptions<AsrConfiguration>>().Value;
 
-        var vadOptions = new VadDetectorOptions { MinSpeechDuration = TimeSpan.FromMilliseconds(250), MinSilenceDuration = TimeSpan.FromMilliseconds(200) };
+                                                var siletroOptions = new SileroVadOptions(ModelUtils.GetModelPath(ModelType.Silero)) { Threshold = asrOptions.VadThreshold, ThresholdGap = asrOptions.VadThresholdGap };
 
-        var realTimeOptions = new RealtimeOptions();
+                                                var vadOptions = new VadDetectorOptions { MinSpeechDuration = TimeSpan.FromMilliseconds(asrOptions.VadMinSpeechDuration), MinSilenceDuration = TimeSpan.FromMilliseconds(asrOptions.VadMinSilenceDuration) };
 
-        services.AddSingleton<IVadDetector>(sp => new SileroVadDetector(vadOptions, siletroOptions));
+                                                return new SileroVadDetector(vadOptions, siletroOptions);
+                                            });
 
-        services.AddSingleton<IRealtimeSpeechTranscriptor>(sp => new RealtimeTranscriptor(
-                                                                                          // new WhisperOnnxSpeechTranscriptorFactory(ModelUtils.GetModelPath(ModelType.WhisperOnnxGpuFp32)),
-                                                                                          new WhisperSpeechTranscriptorFactory(ModelUtils.GetModelPath(ModelType.WhisperGgmlTurbov3)),
-                                                                                          sp.GetRequiredService<IVadDetector>(),
-                                                                                          new WhisperSpeechTranscriptorFactory(ModelUtils.GetModelPath(ModelType.WhisperGgmlTiny)),
-                                                                                          realtimeSpeechTranscriptorOptions,
-                                                                                          realTimeOptions,
-                                                                                          sp.GetRequiredService<ILogger<RealtimeTranscriptor>>()));
+        services.AddSingleton<IRealtimeSpeechTranscriptor>(sp =>
+                                                           {
+                                                               var asrOptions = sp.GetRequiredService<IOptions<AsrConfiguration>>().Value;
+
+                                                               var realtimeSpeechTranscriptorOptions = new RealtimeSpeechTranscriptorOptions {
+                                                                                                                                                 AutodetectLanguageOnce        = false,                    // Flag to detect the language only once or for each segment
+                                                                                                                                                 IncludeSpeechRecogizingEvents = true,                     // Flag to include speech recognizing events (RealtimeSegmentRecognizing)
+                                                                                                                                                 RetrieveTokenDetails          = false,                    // Flag to retrieve token details
+                                                                                                                                                 LanguageAutoDetect            = false,                    // Flag to auto-detect the language
+                                                                                                                                                 Language                      = new CultureInfo("en-US"), // Language to use for transcription
+                                                                                                                                                 Prompt                        = asrOptions.TtsPrompt,
+                                                                                                                                                 Template                      = asrOptions.TtsMode
+                                                                                                                                             };
+
+                                                               var realTimeOptions = new RealtimeOptions();
+
+                                                               return new RealtimeTranscriptor(
+                                                                                               // new WhisperOnnxSpeechTranscriptorFactory(ModelUtils.GetModelPath(ModelType.WhisperOnnxGpuFp32)),
+                                                                                               new WhisperSpeechTranscriptorFactory(ModelUtils.GetModelPath(ModelType.WhisperGgmlTurbov3)),
+                                                                                               sp.GetRequiredService<IVadDetector>(),
+                                                                                               new WhisperSpeechTranscriptorFactory(ModelUtils.GetModelPath(ModelType.WhisperGgmlTiny)),
+                                                                                               realtimeSpeechTranscriptorOptions,
+                                                                                               realTimeOptions,
+                                                                                               sp.GetRequiredService<ILogger<RealtimeTranscriptor>>());
+                                                           });
 
         services.AddSingleton<IMicrophone, MicrophoneInputNAudioSource>();
         services.AddSingleton<IAwaitableAudioSource>(sp => sp.GetRequiredService<IMicrophone>());

@@ -1,5 +1,7 @@
 using System.Globalization;
 
+using PersonaEngine.Lib.Configuration;
+
 using Whisper.net;
 
 namespace PersonaEngine.Lib.ASR.Transcriber;
@@ -48,6 +50,12 @@ public sealed class WhisperSpeechTranscriptorFactory : ISpeechTranscriptorFactor
         {
             currentBuilder = currentBuilder.WithTokenTimestamps();
         }
+        
+        if ( options.Template != null )
+        {
+            currentBuilder = currentBuilder.ApplyTemplate(options.Template.Value);
+        }
+        
 
         var processor = currentBuilder.Build();
 
