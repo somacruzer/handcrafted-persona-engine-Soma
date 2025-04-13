@@ -540,11 +540,11 @@ The structure is as follows (referencing the default values):
 
 ## <a id="usage"></a>▶️ Usage: Showtime\!
 
-1.  ✅ **Double-check Prerequisites**: Is **NVIDIA drivers, CUDA, and cuDNN** installed correctly (using the **manual tarball copy method** as per [Section 2](https://www.google.com/search?q=%23prereq-cuda))? Is .NET Runtime installed? Is `espeak-ng` installed (+ in PATH or path set in JSON)? Are the **Whisper `.bin` models** in `Resources/Models/`? Is your Spout receiver (OBS + Plugin) ready? **This is crucial - the app won't run without CUDA.**
+1.  ✅ **Double-check Prerequisites**: Is **NVIDIA drivers, CUDA, and cuDNN** installed correctly (using the **manual tarball copy method** as per [Section 2](#prereq-cuda))? Is .NET Runtime installed? Is `espeak-ng` installed (+ in PATH or path set in JSON)? Are the **Whisper `.bin` models** in `Resources/Models/`? Is your Spout receiver (OBS + Plugin) ready? **This is crucial - the app won't run without CUDA.**
 2.  ⚙️ **Verify Configuration**: Did you set the correct `Config.Llm.TextEndpoint`, `Config.Llm.TextModel`, and `Config.Llm.TextApiKey` in `appsettings.json`? Is `Config.Live2D.ModelName` set to your avatar's folder name ("aria" or your custom one)?
 3.  📝 **Check Personality**: Is `Resources/Prompts/personality.txt` configured appropriately for your **chosen LLM**? (Did you copy from `personality_example.txt` in the repo and customize if using a standard model?)
 4.  ▶️ **Run the Application**: Execute `PersonaEngine.exe` (from release) or `dotnet PersonaEngine.App.dll` (if built from source).
-5.  🖥️ **Monitor Startup**: The **Config & Control UI** will appear. Pay close attention to the **console window** behind it for log messages. **Critically, look for "CUDA" and "ONNX Runtime" messages confirming successful GPU initialization.** Errors here usually point to CUDA/cuDNN installation issues ([Troubleshooting](https://www.google.com/search?q=%23troubleshooting)).
+5.  🖥️ **Monitor Startup**: The **Config & Control UI** will appear. Pay close attention to the **console window** behind it for log messages. **Critically, look for "CUDA" and "ONNX Runtime" messages confirming successful GPU initialization.** Errors here usually point to CUDA/cuDNN installation issues ([Troubleshooting](#troubleshooting)).
 6.  📺 **Activate Spout Receiver**: Open OBS (or your chosen receiver), add a "Spout2 Capture" source, and select the Persona Engine sender name (default: "Live2D"). The avatar should appear. Add other Spout sources if needed (e.g., "RouletteWheel").
 7.  🎤 **Interact**: Start talking\! The expected flow is:
       * 👂 VAD detects speech.
@@ -573,7 +573,7 @@ The structure is as follows (referencing the default values):
 
       * **Cause:** This almost always indicates an incorrect **CUDA or cuDNN installation**, or missing dependencies for the ONNX Runtime CUDA provider. Persona Engine **cannot run** without these.
       * **Solution:** You likely did not follow the specific **manual installation steps for cuDNN using the tarball/zip archive** OR your CUDA installation/PATH setup is incorrect.
-        1.  Go back to the **[REQUIRED CUDA + cuDNN Setup Guide](https://www.google.com/search?q=%23prereq-cuda)**.
+        1.  Go back to the **[REQUIRED CUDA + cuDNN Setup Guide](#prereq-cuda)**.
         2.  **Carefully re-do Step 3 (Install cuDNN Library)**. Ensure you downloaded the **TAR or ZIP** version of cuDNN compatible with your CUDA 12.x installation (v9 recommended for CUDA 12.2).
         3.  **Manually copy** the files from the extracted cuDNN `bin`, `include`, and `lib` folders into the corresponding folders within your CUDA Toolkit installation directory (e.g., `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.2\`).
         4.  Ensure the CUDA `bin` directory (e.g., `...\CUDA\v12.2\bin`) is correctly listed in your **System Environment Variables `Path`** (Step 4).
@@ -583,7 +583,7 @@ The structure is as follows (referencing the default values):
   * **Text-to-Speech (TTS) is Silent or Crashes the App**
 
       * **Cause 1:** `espeak-ng` is not installed or not accessible via system PATH or the configured `Config.Tts.EspeakPath`.
-      * **Solution 1:** Install `espeak-ng` (see [Prerequisites Section 3](https://www.google.com/search?q=%23prereq-software)). **During installation, ensure you check the box to "Add espeak-ng to the system PATH"**. If you missed this, either reinstall `espeak-ng` and check the box, OR find the `espeak-ng` installation folder (e.g., `C:\Program Files\eSpeak NG`) and put its full path (use double backslashes like `"C:\\Program Files\\eSpeak NG"`) into the `Config.Tts.EspeakPath` setting in `appsettings.json`, then restart the app.
+      * **Solution 1:** Install `espeak-ng` (see [Prerequisites Section 3](#prereq-software)). **During installation, ensure you check the box to "Add espeak-ng to the system PATH"**. If you missed this, either reinstall `espeak-ng` and check the box, OR find the `espeak-ng` installation folder (e.g., `C:\Program Files\eSpeak NG`) and put its full path (use double backslashes like `"C:\\Program Files\\eSpeak NG"`) into the `Config.Tts.EspeakPath` setting in `appsettings.json`, then restart the app.
       * **Cause 2:** TTS models (`kokoro` voices) are missing or corrupted.
       * **Solution 2:** Ensure the `Resources/Models/kokoro` folder exists and contains the necessary TTS model files (usually included in the release `.zip`). If building from source, ensure you copied these correctly.
 
@@ -617,7 +617,7 @@ The structure is as follows (referencing the default values):
 <img src="assets/mascot_sigh.png" alt="Mascot Giving Up" width="150" align="right">
 
   * Check the **console window** and the **Control UI's log/status sections** for detailed error messages - these are often key\!
-  * Join our [**Discord Community**](https://www.google.com/search?q=%23community)\! Ask for help in the support channels, providing details about:
+  * Join our [**Discord Community**](#community)\! Ask for help in the support channels, providing details about:
       * What you were trying to do.
       * What happened (and any specific error messages from the console or UI).
       * Your operating system (Windows version).
@@ -652,4 +652,4 @@ Please try to adhere to the existing coding style and conventions. For major cha
 
 -----
 
-*Remember to consult the [Live2D Integration & Rigging Guide](https://www.google.com/search?q=./Live2D.md) for details on preparing custom avatars.*
+*Remember to consult the [Live2D Integration & Rigging Guide](./Live2D.md) for details on preparing custom avatars.*
