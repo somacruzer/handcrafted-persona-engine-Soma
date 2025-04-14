@@ -10,6 +10,8 @@ public record AvatarAppConfig
 
     public AsrConfiguration Asr { get; set; } = new();
 
+    public MicrophoneConfiguration Microphone { get; set; } = new();
+
     public SubtitleOptions Subtitle { get; set; } = new();
 
     public Live2DOptions Live2D { get; set; } = new();

@@ -70,6 +70,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddASRSystem(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AsrConfiguration>(configuration.GetSection("Config:Asr"));
+        services.Configure<MicrophoneConfiguration>(configuration.GetSection("Config:Microphone"));
 
         services.AddSingleton<IVadDetector>(sp =>
                                             {
