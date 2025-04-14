@@ -14,12 +14,15 @@ public class ConfigSectionRegistrationTask : IStartupTask
 
     private readonly TtsConfigEditor _ttsEditor;
 
-    public ConfigSectionRegistrationTask(IConfigSectionRegistry registry, TtsConfigEditor ttsEditor, RouletteWheelEditor rouletteWheelEditor, ChatEditor chatEditor)
+    private readonly MicrophoneConfigEditor _microphoneConfigEditor;
+
+    public ConfigSectionRegistrationTask(IConfigSectionRegistry registry, TtsConfigEditor ttsEditor, RouletteWheelEditor rouletteWheelEditor, ChatEditor chatEditor, MicrophoneConfigEditor microphoneConfigEditor)
     {
-        _registry            = registry;
-        _ttsEditor           = ttsEditor;
-        _rouletteWheelEditor = rouletteWheelEditor;
-        _chatEditor          = chatEditor;
+        _registry                    = registry;
+        _ttsEditor                   = ttsEditor;
+        _rouletteWheelEditor         = rouletteWheelEditor;
+        _chatEditor                  = chatEditor;
+        _microphoneConfigEditor = microphoneConfigEditor;
     }
 
     public void Execute(GL _)
@@ -27,5 +30,6 @@ public class ConfigSectionRegistrationTask : IStartupTask
         _registry.RegisterSection(_ttsEditor);
         _registry.RegisterSection(_rouletteWheelEditor);
         _registry.RegisterSection(_chatEditor);
+        _registry.RegisterSection(_microphoneConfigEditor);
     }
 }

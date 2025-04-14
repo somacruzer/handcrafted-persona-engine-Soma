@@ -52,6 +52,7 @@ public class UiConfigurationManager : IUiConfigurationManager
             "TTS" => (T)(object)_currentConfig.Tts,
             "Voice" => (T)(object)_currentConfig.Tts.Voice,
             "RouletteWheel" => (T)(object)_currentConfig.RouletteWheel,
+            "Microphone" => (T)(object)_currentConfig.Microphone,
             _ => throw new ArgumentException($"Unknown section key: {sectionKey}")
         };
     }
@@ -111,6 +112,18 @@ public class UiConfigurationManager : IUiConfigurationManager
                     throw new ArgumentException($"Invalid configuration type {typeof(T).Name} for section {sectionKey}");
                 }
 
+                break;
+            case "Microphone":
+                if ( configuration is MicrophoneConfiguration microphoneConfig )
+                {
+                    _currentConfig = _currentConfig with { Microphone = microphoneConfig };
+                    OnConfigurationChanged(sectionKey, ConfigurationChangedEventArgs.ChangeType.Updated);
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid configuration type {typeof(T).Name} for section {sectionKey}");
+                }
+                
                 break;
             default:
                 throw new ArgumentException($"Unknown section key: {sectionKey}");

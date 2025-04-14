@@ -271,6 +271,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<TtsConfigEditor>();
         services.AddSingleton<RouletteWheelEditor>();
         services.AddSingleton<ChatEditor>();
+        services.AddSingleton<MicrophoneConfigEditor>();
 
         services.AddSingleton<IStartupTask, ConfigSectionRegistrationTask>();
 

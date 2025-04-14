@@ -177,7 +177,10 @@ public sealed class MicrophoneInputNAudioSource : AwaitableWaveFileSource, IMicr
             {
                 _microphoneIn = new WaveInEvent { DeviceNumber = deviceNumber, WaveFormat = new WaveFormat(16000, 16, 1) };
 
-                Initialize(new AudioSourceHeader { BitsPerSample = 16, Channels = 1, SampleRate = 16000 });
+                if (!IsInitialized)
+                {
+                    Initialize(new AudioSourceHeader { BitsPerSample = 16, Channels = 1, SampleRate = 16000 });
+                }
 
                 _microphoneIn.DataAvailable    += WaveIn_DataAvailable;
                 _microphoneIn.RecordingStopped += MicrophoneIn_RecordingStopped;
