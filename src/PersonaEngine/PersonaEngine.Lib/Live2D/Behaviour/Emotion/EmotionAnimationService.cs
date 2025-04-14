@@ -322,7 +322,7 @@ public class EmotionAnimationService : ILive2DAnimationService
 
     private void ApplyEmotion(string? emotionEmoji)
     {
-        if ( _model == null || emotionEmoji == _triggeredEmotionEmoji )
+        if ( !_isStarted || _model == null || emotionEmoji == _triggeredEmotionEmoji )
         {
             return;
         }
@@ -396,6 +396,11 @@ public class EmotionAnimationService : ILive2DAnimationService
 
     private void ApplyNeutralExpression()
     {
+        if ( !_isStarted || _model == null )
+        {
+            return;
+        }
+        
         var neutralToApply = string.IsNullOrEmpty(NEUTRAL_EXPRESSION_ID) ? null : NEUTRAL_EXPRESSION_ID;
 
         if ( _activeExpressionId != neutralToApply )
