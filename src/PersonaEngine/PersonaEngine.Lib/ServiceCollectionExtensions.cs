@@ -27,6 +27,7 @@ using PersonaEngine.Lib.Live2D;
 using PersonaEngine.Lib.Live2D.Behaviour;
 using PersonaEngine.Lib.Live2D.Behaviour.Emotion;
 using PersonaEngine.Lib.Live2D.Behaviour.LipSync;
+using PersonaEngine.Lib.THA4;
 using PersonaEngine.Lib.LLM;
 using PersonaEngine.Lib.Logging;
 using PersonaEngine.Lib.TTS.Audio;
@@ -54,7 +55,7 @@ public static class ServiceCollectionExtensions
 
         services.AddConversation(configuration, configureKernel);
         services.AddUI(configuration);
-        services.AddLive2D(configuration);
+        services.AddTha4(configuration);
         services.AddSystemAudioPlayer();
         services.AddPolly(configuration);
 
@@ -278,6 +279,17 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ILive2DAnimationService, VBridgerLipSyncService>();
         services.AddSingleton<ILive2DAnimationService, IdleBlinkingAnimationService>();
         services.AddEmotionProcessing(configuration);
+
+        return services;
+    }
+
+    public static IServiceCollection AddTha4(
+        this IServiceCollection services,
+        IConfiguration          configuration)
+    {
+        services.Configure<Tha4Options>(configuration.GetSection("Config:Tha4"));
+
+        services.AddSingleton<IRenderComponent, Tha4SpoutReceiver>();
 
         return services;
     }
