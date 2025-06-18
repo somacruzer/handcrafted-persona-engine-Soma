@@ -1,5 +1,6 @@
 #pragma warning disable SKEXP0001
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
@@ -55,7 +56,16 @@ public static class ServiceCollectionExtensions
 
         services.AddConversation(configuration, configureKernel);
         services.AddUI(configuration);
-        services.AddTha4(configuration);
+
+        var backend = configuration.GetValue<string>("Config:AvatarBackend") ?? "Live2D";
+        if (string.Equals(backend, nameof(AvatarBackend.Tha4), StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddTha4(configuration);
+        }
+        else
+        {
+            services.AddLive2D(configuration);
+        }
         services.AddSystemAudioPlayer();
         services.AddPolly(configuration);
 

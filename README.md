@@ -114,6 +114,7 @@ It integrates seamlessly into streaming software like OBS Studio using Spout for
 * 🖼 **THA4 Student Model Input (Experimental):**
     * Receives frames from a THA4 puppeteer via Spout.
     * Allows using a single-image avatar in place of Live2D.
+    * Enable by setting `Config:AvatarBackend` to `"Tha4"` in `appsettings.json`.
 
 * 🧠 **AI-Driven Conversation:**
     * Connects to OpenAI-compatible Large Language Model (`LLM`) APIs (local or cloud).

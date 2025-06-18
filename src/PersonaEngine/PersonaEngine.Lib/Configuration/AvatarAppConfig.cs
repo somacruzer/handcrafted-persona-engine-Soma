@@ -16,6 +16,8 @@ public record AvatarAppConfig
 
     public SubtitleOptions Subtitle { get; set; } = new();
 
+    public AvatarBackend AvatarBackend { get; set; } = AvatarBackend.Live2D;
+
     public Live2DOptions Live2D { get; set; } = new();
 
     public Tha4Options Tha4 { get; set; } = new();
