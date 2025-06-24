@@ -111,6 +111,11 @@ It integrates seamlessly into streaming software like OBS Studio using Spout for
     * Dedicated services for **Emotion**, **Idle**, and **Blinking** animations.
     * **See the detailed [Live2D Integration & Rigging Guide](./Live2D.md) for custom model requirements!**
 
+* 🖼 **THA4 Student Model Input (Experimental):**
+    * Receives frames from a THA4 puppeteer via Spout.
+    * Allows using a single-image avatar in place of Live2D.
+    * Enable by setting `Config:AvatarBackend` to `"Tha4"` in `appsettings.json`.
+
 * 🧠 **AI-Driven Conversation:**
     * Connects to OpenAI-compatible Large Language Model (`LLM`) APIs (local or cloud).
     * Guided by your custom `personality.txt` file.
